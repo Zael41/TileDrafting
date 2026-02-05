@@ -8,6 +8,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int gridSize;
     [SerializeField] private Vector2Int playerPos;
     [SerializeField] private Sprite vaultTile;
+    [SerializeField] private TileSelector tileSelector;
     [SerializeField] private List<Tile> testtiles;
     private Tile[,] tiles;
     private Keyboard keyboard;
@@ -65,9 +66,10 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        if (keyboard.wKey.wasPressedThisFrame)
+        if (keyboard.sKey.wasPressedThisFrame)
         {
-            Debug.Log("test W key");
+            Tile nextTile = tiles[playerPos.x, playerPos.y - 1];
+            tileSelector.ShowMenu();
         }
     }
 }
