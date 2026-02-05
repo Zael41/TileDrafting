@@ -188,7 +188,23 @@ MonoBehaviour:
     5. Enter to place it
 
     6. WASD
-    to move'
+    to move
+
+
+    Sistema de alarma
+
+    Sistema de vidas
+
+    Guardias
+
+    Camaras
+    drafteadas que suban la alarma al entrar en la tile
+
+    Vault empiezan lockeadas
+    hasta que drafteas una control room
+
+    Vault se puede entrar por cualquier
+    lado pero salir solo por el que has entrado'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -518,8 +534,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
   slotPrefab: {fileID: 6909526208898626051, guid: d10b2acc78473f54aaf27de25d61df10, type: 3}
-  vaultPrefab: {fileID: 6909526208898626051, guid: f48aa64429e553e4091d1ae7fde9c7b1, type: 3}
   gridSize: 8
+  playerPos: {x: 0, y: 7}
+  vaultTile: {fileID: -1974042178797025698, guid: 9263eea8d3ff9a449975b46d2442917a, type: 3}
 --- !u!4 &1578647156
 Transform:
   m_ObjectHideFlags: 0
