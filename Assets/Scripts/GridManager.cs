@@ -12,6 +12,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<Tile> testtiles;
     private Tile[,] tiles;
     private Keyboard keyboard;
+    private Tile nextTile;
 
     private void Start()
     {
@@ -68,8 +69,18 @@ public class GridManager : MonoBehaviour
     {
         if (keyboard.sKey.wasPressedThisFrame)
         {
-            Tile nextTile = tiles[playerPos.x, playerPos.y - 1];
-            tileSelector.ShowMenu();
+            nextTile = tiles[playerPos.x, playerPos.y - 1];
+            if (!nextTile.generated)
+            {
+                tileSelector.ShowMenu();
+                tileSelector.GenerateTiles();
+            }
         }
+    }
+
+    public void PlaceTile(Sprite sprite)
+    {
+        nextTile.tileObject.GetComponent<SpriteRenderer>().sprite = sprite; //Need to add camera and directions
+        nextTile.generated = true;
     }
 }
