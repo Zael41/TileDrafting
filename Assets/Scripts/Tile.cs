@@ -7,7 +7,7 @@ public class Tile
     public GameObject tileObject;
     public bool generated;
     public bool camera;
-    public bool canGoUp, canGoDown, canGoLeft, canGoRight;
+    public bool[] directions; // 0 - up, 1 - right, 2 - down, 3 - left
     public bool isVault;
 
     public Tile(Vector2Int position, GameObject tileObject, bool isVault = false)
@@ -16,10 +16,7 @@ public class Tile
         this.tileObject = tileObject;
         generated = false;
         camera = false;
-        canGoUp = false;
-        canGoDown = false;
-        canGoLeft = false;
-        canGoRight = false;
+        directions = new bool[4];
         this.isVault = isVault;
     }
 }

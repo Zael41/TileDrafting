@@ -7,6 +7,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private int gridSize;
     [SerializeField] private Vector2Int playerPos;
+    [SerializeField] private GameObject player;
     [SerializeField] private Sprite vaultTile;
     [SerializeField] private TileSelector tileSelector;
     [SerializeField] private List<Tile> testtiles;
@@ -31,12 +32,12 @@ public class GridManager : MonoBehaviour
                 if (i == vault1Pos.x && j == vault1Pos.y)
                 {
                     tiles[i, j] = new Tile(vault1Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), true);
-                    tiles[i, j].tileObject.GetComponent<SpriteRenderer>().sprite = vaultTile;
+                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = vaultTile;
                 }
                 else if (i == vault2Pos.x && j == vault2Pos.y)
                 {
                     tiles[i, j] = new Tile(vault2Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), true);
-                    tiles[i, j].tileObject.GetComponent<SpriteRenderer>().sprite = vaultTile;
+                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = vaultTile;
                 }
                 else
                 {
@@ -74,13 +75,23 @@ public class GridManager : MonoBehaviour
             {
                 tileSelector.ShowMenu();
                 tileSelector.GenerateTiles();
+                tileSelector.requiredDirection = 0;
+            }
+            else
+            {
+                player.transform.position += new Vector3(0f, -1f, 0f);
+                playerPos += new Vector2Int(0, -1);
             }
         }
     }
 
-    public void PlaceTile(Sprite sprite)
+    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions)
     {
-        nextTile.tileObject.GetComponent<SpriteRenderer>().sprite = sprite; //Need to add camera and directions
+        nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = sprite;
+        nextTile.tileObject.transform.GetChild(0).rotation = rotation;
         nextTile.generated = true;
+        nextTile.camera = camera;
+        nextTile.directions = directions;
+        if (camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
     }
 }

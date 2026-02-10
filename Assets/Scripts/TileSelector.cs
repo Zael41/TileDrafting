@@ -6,11 +6,12 @@ using UnityEngine.UI;
 public class TileSelector : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
-    [SerializeField] private List<GameObject> tileObjects;
+    [SerializeField] private List<UITiles> UITiles; //Change this for another custom class called "UITiles" that also stores their info
     [SerializeField] private List<AvailableTiles> availableTiles;
     [SerializeField] private List<SelectableTiles> selectableTiles;
     private int selectedTile;
     private Keyboard keyboard;
+    public int requiredDirection;
 
     private void Start()
     {
@@ -19,11 +20,11 @@ public class TileSelector : MonoBehaviour
         {
             for (int i = 0; i < tile.amountWithoutCamera; i++)
             {
-                selectableTiles.Add(new SelectableTiles(tile.tileSprite, false));
+                selectableTiles.Add(new SelectableTiles(tile.tileSprite, false, tile.directions));
             }
             for (int i = 0; i < tile.amountWithCamera; i++)
             {
-                selectableTiles.Add(new SelectableTiles(tile.tileSprite, true));
+                selectableTiles.Add(new SelectableTiles(tile.tileSprite, true, tile.directions));
             }
         }
         keyboard = Keyboard.current;
@@ -36,23 +37,35 @@ public class TileSelector : MonoBehaviour
         {
             if (keyboard.downArrowKey.wasPressedThisFrame)
             {
-                tileObjects[selectedTile].transform.GetChild(0).gameObject.SetActive(false);
+                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(false);
                 selectedTile++;
                 if (selectedTile > 2) selectedTile = 0;
-                tileObjects[selectedTile].transform.GetChild(0).gameObject.SetActive(true);
+                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
             }
             if (keyboard.upArrowKey.wasPressedThisFrame)
             {
-                tileObjects[selectedTile].transform.GetChild(0).gameObject.SetActive(false);
+                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(false);
                 selectedTile--;
                 if (selectedTile < 0) selectedTile = 2;
-                tileObjects[selectedTile].transform.GetChild(0).gameObject.SetActive(true);
+                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
             }
-            if (keyboard.enterKey.wasPressedThisFrame)
+            if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection]) //Checks if it connects
             {
-                gridManager.PlaceTile(tileObjects[selectedTile].GetComponent<Image>().sprite); //Need to add camera and directions
+                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions);
                 selectedTile = -1;
                 HideMenu();
+            }
+            if (keyboard.rKey.wasPressedThisFrame)
+            {
+                UITiles[selectedTile].tileObject.transform.GetChild(0).Rotate(0, 0, 90);
+                bool[] newDirections = new bool[4];
+                for (int i = 0; i < UITiles[selectedTile].directions.Length; i++)
+                {
+                    int nextIndex = i + 1;
+                    if (nextIndex > 3) nextIndex = 0;
+                    newDirections[i] = UITiles[selectedTile].directions[nextIndex];
+                }
+                UITiles[selectedTile].directions = newDirections;
             }
         }
     }
@@ -75,14 +88,18 @@ public class TileSelector : MonoBehaviour
 
     public void GenerateTiles()
     {
-        foreach (GameObject obj in tileObjects)
+        foreach (UITiles obj in UITiles)
         {
             int randomIndex = Random.Range(0, selectableTiles.Count);
             SelectableTiles randomTile = selectableTiles[randomIndex];
-            obj.GetComponent<Image>().sprite = randomTile.tileSprite;
+            obj.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = randomTile.tileSprite;
+            obj.camera = randomTile.camera;
+            obj.directions = randomTile.directions;
+            if (randomTile.camera) obj.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+            else obj.tileObject.transform.GetChild(2).gameObject.SetActive(false);
         }
         selectedTile = 0;
-        tileObjects[selectedTile].transform.GetChild(0).gameObject.SetActive(true);
+        UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
     }
 }
 
@@ -90,6 +107,7 @@ public class TileSelector : MonoBehaviour
 public class AvailableTiles //Used by the developer to tell the game how many tiles to generate
 {
     public Sprite tileSprite;
+    public bool[] directions;
     public int amountWithoutCamera;
     public int amountWithCamera;
 }
@@ -99,10 +117,20 @@ public class SelectableTiles //The actual X amount of tiles that the player will
 {
     public Sprite tileSprite;
     public bool camera;
+    public bool[] directions;
 
-    public SelectableTiles(Sprite tileSprite, bool camera)
+    public SelectableTiles(Sprite tileSprite, bool camera, bool[] directions)
     {
         this.tileSprite = tileSprite;
         this.camera = camera;
+        this.directions = directions;
     }
+}
+
+[System.Serializable]
+public class UITiles // The three tiles that appear on the screen
+{
+    public GameObject tileObject;
+    public bool camera;
+    public bool[] directions;
 }
