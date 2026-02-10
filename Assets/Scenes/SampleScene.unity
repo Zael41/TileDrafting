@@ -1336,6 +1336,7 @@ MonoBehaviour:
   startTile: {fileID: 339172498047753876, guid: 562abdefe0a83874eb99a514dc4c7833, type: 3}
   tileSelector: {fileID: 1646741361}
   testtiles: []
+  generatingTiles: 0
 --- !u!4 &1578647156
 Transform:
   m_ObjectHideFlags: 0
@@ -1511,7 +1512,7 @@ MonoBehaviour:
     amountWithoutCamera: 0
     amountWithCamera: 2
   - tileSprite: {fileID: -2646416099745161402, guid: 4832018405ab82b4c8d375bda123335b, type: 3}
-    directions: 01000000
+    directions: 01010000
     amountWithoutCamera: 2
     amountWithCamera: 0
   selectableTiles: []
