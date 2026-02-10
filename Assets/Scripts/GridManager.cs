@@ -9,11 +9,13 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Vector2Int playerPos;
     [SerializeField] private GameObject player;
     [SerializeField] private Sprite vaultTile;
+    [SerializeField] private Sprite startTile;
     [SerializeField] private TileSelector tileSelector;
     [SerializeField] private List<Tile> testtiles;
     private Tile[,] tiles;
     private Keyboard keyboard;
     private Tile nextTile;
+    public bool generatingTiles;
 
     private void Start()
     {
@@ -29,7 +31,13 @@ public class GridManager : MonoBehaviour
         {
             for(int j = 0; j < gridSize; j++)
             {
-                if (i == vault1Pos.x && j == vault1Pos.y)
+                if (i == 4 && j == 4) //Change this if grid size changes
+                {
+                    tiles[i, j] = new Tile(new Vector2Int(i, j), Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform));
+                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = startTile;
+                    tiles[i, j].directions = new bool[4] { true, true, true, true };
+                }
+                else if (i == vault1Pos.x && j == vault1Pos.y)
                 {
                     tiles[i, j] = new Tile(vault1Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), true);
                     tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = vaultTile;
@@ -68,7 +76,8 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        if (keyboard.sKey.wasPressedThisFrame)
+        if (generatingTiles) return;
+        if (keyboard.sKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[2])
         {
             nextTile = tiles[playerPos.x, playerPos.y - 1];
             if (!nextTile.generated)
@@ -76,11 +85,60 @@ public class GridManager : MonoBehaviour
                 tileSelector.ShowMenu();
                 tileSelector.GenerateTiles();
                 tileSelector.requiredDirection = 0;
+                generatingTiles = true;
             }
             else
             {
                 player.transform.position += new Vector3(0f, -1f, 0f);
                 playerPos += new Vector2Int(0, -1);
+            }
+        }
+        if (keyboard.wKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[0])
+        {
+            nextTile = tiles[playerPos.x, playerPos.y + 1];
+            if (!nextTile.generated)
+            {
+                tileSelector.ShowMenu();
+                tileSelector.GenerateTiles();
+                tileSelector.requiredDirection = 2;
+                generatingTiles = true;
+            }
+            else
+            {
+                player.transform.position += new Vector3(0f, 1f, 0f);
+                playerPos += new Vector2Int(0, 1);
+            }
+        }
+        if (keyboard.aKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[3])
+        {
+            nextTile = tiles[playerPos.x - 1, playerPos.y];
+            if (!nextTile.generated)
+            {
+                tileSelector.ShowMenu();
+                tileSelector.GenerateTiles();
+                tileSelector.requiredDirection = 1;
+                generatingTiles = true;
+            }
+            else
+            {
+                player.transform.position += new Vector3(-1f, 0f, 0f);
+                playerPos += new Vector2Int(-1, 0);
+            }
+        }
+        if (keyboard.dKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[1])
+        {
+            nextTile = tiles[playerPos.x + 1, playerPos.y];
+            if (!nextTile.generated)
+            {
+                tileSelector.ShowMenu();
+                tileSelector.GenerateTiles();
+                tileSelector.requiredDirection = 3;
+                generatingTiles = true;
+            }
+            else
+            {
+                player.transform.position += new Vector3(1f, 0f, 0f);
+                playerPos += new Vector2Int(1, 0);
             }
         }
     }

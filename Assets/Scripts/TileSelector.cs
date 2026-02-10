@@ -54,6 +54,8 @@ public class TileSelector : MonoBehaviour
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions);
                 selectedTile = -1;
                 HideMenu();
+                gridManager.generatingTiles = false;
+                //Remove the placed tile from the pool
             }
             if (keyboard.rKey.wasPressedThisFrame)
             {
@@ -90,6 +92,8 @@ public class TileSelector : MonoBehaviour
     {
         foreach (UITiles obj in UITiles)
         {
+            obj.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
+            obj.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
             int randomIndex = Random.Range(0, selectableTiles.Count);
             SelectableTiles randomTile = selectableTiles[randomIndex];
             obj.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = randomTile.tileSprite;

@@ -576,7 +576,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 3, z: -10}
+  m_LocalPosition: {x: 4, y: 4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1329,10 +1329,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
   slotPrefab: {fileID: 6909526208898626051, guid: d10b2acc78473f54aaf27de25d61df10, type: 3}
-  gridSize: 8
-  playerPos: {x: 0, y: 7}
+  gridSize: 9
+  playerPos: {x: 4, y: 4}
   player: {fileID: 127755451}
   vaultTile: {fileID: -1974042178797025698, guid: 9263eea8d3ff9a449975b46d2442917a, type: 3}
+  startTile: {fileID: 339172498047753876, guid: 562abdefe0a83874eb99a514dc4c7833, type: 3}
   tileSelector: {fileID: 1646741361}
   testtiles: []
 --- !u!4 &1578647156
@@ -1797,11 +1798,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4480173158251935184, guid: da2d212dc57413246a262e4652ad44e5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4480173158251935184, guid: da2d212dc57413246a262e4652ad44e5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4480173158251935184, guid: da2d212dc57413246a262e4652ad44e5, type: 3}
       propertyPath: m_LocalPosition.z
