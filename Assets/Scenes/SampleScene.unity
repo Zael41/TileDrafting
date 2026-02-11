@@ -1515,6 +1515,18 @@ MonoBehaviour:
     directions: 01010000
     amountWithoutCamera: 2
     amountWithCamera: 0
+  - tileSprite: {fileID: -569696432635615704, guid: 926f331ad19533549893f1d986c7b9b6, type: 3}
+    directions: 01000000
+    amountWithoutCamera: 1
+    amountWithCamera: 0
+  - tileSprite: {fileID: -452238368137487410, guid: 218d44f3753ae10459bc556ddabf5c7d, type: 3}
+    directions: 01010100
+    amountWithoutCamera: 1
+    amountWithCamera: 0
+  - tileSprite: {fileID: 1796906307087948806, guid: 2d475adf53e99bf4bb7320d3503d1c9e, type: 3}
+    directions: 01000000
+    amountWithoutCamera: 2
+    amountWithCamera: 0
   selectableTiles: []
   requiredDirection: 0
 --- !u!1 &1708373590
