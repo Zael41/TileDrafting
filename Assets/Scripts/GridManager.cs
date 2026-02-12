@@ -9,6 +9,7 @@ public class GridManager : MonoBehaviour
     [Header("Assets")]
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject guard;
     [SerializeField] private Sprite lockedVault;
     [SerializeField] private Sprite openVault;
     [SerializeField] private Sprite startTile;
@@ -25,6 +26,7 @@ public class GridManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
     [SerializeField] private TMP_Text alertText;
+    [SerializeField] private TMP_Text healthText;
     
     [SerializeField] private List<Tile> testtiles;
 
@@ -112,7 +114,7 @@ public class GridManager : MonoBehaviour
         return vaultPos;
     }
 
-    private void Update() // There has to be a way to unify all this repeating code, and check for out of bounds
+    private void Update() // There has to be a way to unify all this repeating code, and check for out of bounds, and draft tiles before even moving
     {
         if (generatingTiles) return;
         if (keyboard.sKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[2])
@@ -284,6 +286,16 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     vaultTiles.RemoveAt(choice);
                     break;
+                case TileTypes.Surveillance:
+                    toNextAlertLevel = 0;
+                    alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
+                    tiles[playerPos.x, playerPos.y].remainingUses--;
+                    break;
+                case TileTypes.Med_Bay:
+                    health++;
+                    healthText.text = "Health: " + health;
+                    tiles[playerPos.x, playerPos.y].remainingUses--;
+                    break;
                 default:
                     break;
             }
@@ -308,6 +320,13 @@ public class GridManager : MonoBehaviour
         {
             alertLevel++;
             toNextAlertLevel = 0;
+            Vector2Int randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+            while (!tiles[randomGuardPos.x, randomGuardPos.y].generated)
+            {
+                randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+            }
+            Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
+
         }
         alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
         nextTile.cameraEnabled = false;
