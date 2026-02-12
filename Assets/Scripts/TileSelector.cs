@@ -20,11 +20,11 @@ public class TileSelector : MonoBehaviour
         {
             for (int i = 0; i < tile.amountWithoutCamera; i++)
             {
-                selectableTiles.Add(new SelectableTiles(tile.tileSprite, false, tile.directions));
+                selectableTiles.Add(new SelectableTiles(tile.tileSprite, tile.tileType, false, tile.directions));
             }
             for (int i = 0; i < tile.amountWithCamera; i++)
             {
-                selectableTiles.Add(new SelectableTiles(tile.tileSprite, true, tile.directions));
+                selectableTiles.Add(new SelectableTiles(tile.tileSprite, tile.tileType, true, tile.directions));
             }
         }
         keyboard = Keyboard.current;
@@ -51,7 +51,7 @@ public class TileSelector : MonoBehaviour
             }
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection]) //Checks if it connects
             {
-                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions);
+                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType);
                 selectedTile = -1;
                 HideMenu();
                 gridManager.generatingTiles = false;
@@ -97,6 +97,7 @@ public class TileSelector : MonoBehaviour
             int randomIndex = Random.Range(0, selectableTiles.Count);
             SelectableTiles randomTile = selectableTiles[randomIndex];
             obj.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = randomTile.tileSprite;
+            obj.tileType = randomTile.tileType;
             obj.camera = randomTile.camera;
             obj.directions = randomTile.directions;
             if (randomTile.camera) obj.tileObject.transform.GetChild(2).gameObject.SetActive(true);
@@ -111,6 +112,7 @@ public class TileSelector : MonoBehaviour
 public class AvailableTiles //Used by the developer to tell the game how many tiles to generate
 {
     public Sprite tileSprite;
+    public TileTypes tileType;
     public bool[] directions;
     public int amountWithoutCamera;
     public int amountWithCamera;
@@ -120,12 +122,14 @@ public class AvailableTiles //Used by the developer to tell the game how many ti
 public class SelectableTiles //The actual X amount of tiles that the player will choose from
 {
     public Sprite tileSprite;
+    public TileTypes tileType;
     public bool camera;
     public bool[] directions;
 
-    public SelectableTiles(Sprite tileSprite, bool camera, bool[] directions)
+    public SelectableTiles(Sprite tileSprite, TileTypes tileType, bool camera, bool[] directions)
     {
         this.tileSprite = tileSprite;
+        this.tileType = tileType;
         this.camera = camera;
         this.directions = directions;
     }
@@ -135,6 +139,7 @@ public class SelectableTiles //The actual X amount of tiles that the player will
 public class UITiles // The three tiles that appear on the screen
 {
     public GameObject tileObject;
+    public TileTypes tileType;
     public bool camera;
     public bool[] directions;
 }

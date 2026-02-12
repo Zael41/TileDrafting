@@ -4,18 +4,27 @@ using UnityEngine.InputSystem;
 
 public class GridManager : MonoBehaviour
 {
+    [Header("Assets")]
     [SerializeField] private GameObject slotPrefab;
-    [SerializeField] private int gridSize;
-    [SerializeField] private Vector2Int playerPos;
     [SerializeField] private GameObject player;
     [SerializeField] private Sprite vaultTile;
     [SerializeField] private Sprite startTile;
+
+    [Header("Game Variables")]
+    [SerializeField] private int gridSize;
+    [SerializeField] private Vector2Int playerPos;
+    [SerializeField] private int health;
+    [SerializeField] private int alert;
+
+    [Header("References")]
     [SerializeField] private TileSelector tileSelector;
+    
     [SerializeField] private List<Tile> testtiles;
+
     private Tile[,] tiles;
     private Keyboard keyboard;
     private Tile nextTile;
-    public bool generatingTiles;
+    [HideInInspector] public bool generatingTiles;
 
     private void Start()
     {
@@ -36,15 +45,16 @@ public class GridManager : MonoBehaviour
                     tiles[i, j] = new Tile(new Vector2Int(i, j), Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform));
                     tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = startTile;
                     tiles[i, j].directions = new bool[4] { true, true, true, true };
+                    tiles[i, j].generated = true;
                 }
                 else if (i == vault1Pos.x && j == vault1Pos.y)
                 {
-                    tiles[i, j] = new Tile(vault1Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), true);
+                    tiles[i, j] = new Tile(vault1Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), TileTypes.Vault);
                     tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = vaultTile;
                 }
                 else if (i == vault2Pos.x && j == vault2Pos.y)
                 {
-                    tiles[i, j] = new Tile(vault2Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), true);
+                    tiles[i, j] = new Tile(vault2Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), TileTypes.Vault);
                     tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = vaultTile;
                 }
                 else
@@ -143,13 +153,14 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions)
+    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions, TileTypes tileType)
     {
         nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = sprite;
         nextTile.tileObject.transform.GetChild(0).rotation = rotation;
         nextTile.generated = true;
         nextTile.camera = camera;
         nextTile.directions = directions;
+        nextTile.tileType = tileType;
         if (camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
     }
 }
