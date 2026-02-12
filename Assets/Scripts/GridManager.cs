@@ -2,13 +2,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.U2D;
 
 public class GridManager : MonoBehaviour
 {
     [Header("Assets")]
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject player;
-    [SerializeField] private Sprite vaultTile;
+    [SerializeField] private Sprite lockedVault;
+    [SerializeField] private Sprite openVault;
     [SerializeField] private Sprite startTile;
 
     [Header("Game Variables")]
@@ -16,6 +18,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Vector2Int playerPos;
     [SerializeField] private int health;
     [SerializeField] private int alert;
+    [SerializeField] private int vaultNumber;
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
@@ -24,6 +27,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<Tile> testtiles;
 
     private Tile[,] tiles;
+    private List<Tile> vaultTiles;
     private Keyboard keyboard;
     private Tile nextTile;
     [HideInInspector] public bool generatingTiles;
@@ -53,6 +57,7 @@ public class GridManager : MonoBehaviour
             vault2Pos = GetRandomVaultPos();
         }
         testtiles = new List<Tile>();
+        vaultTiles = new List<Tile>();
         tiles = new Tile[gridSize,gridSize];
         for (int i = 0; i < gridSize; i++)
         {
@@ -64,16 +69,19 @@ public class GridManager : MonoBehaviour
                     tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = startTile;
                     tiles[i, j].directions = new bool[4] { true, true, true, true };
                     tiles[i, j].generated = true;
+                    tiles[i,j].tileType = TileTypes.Start;
                 }
                 else if (i == vault1Pos.x && j == vault1Pos.y)
                 {
                     tiles[i, j] = new Tile(vault1Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), TileTypes.Vault);
-                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = vaultTile;
+                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
+                    vaultTiles.Add(tiles[i, j]);
                 }
                 else if (i == vault2Pos.x && j == vault2Pos.y)
                 {
                     tiles[i, j] = new Tile(vault2Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), TileTypes.Vault);
-                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = vaultTile;
+                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
+                    vaultTiles.Add(tiles[i, j]);
                 }
                 else
                 {
@@ -108,32 +116,67 @@ public class GridManager : MonoBehaviour
         if (keyboard.sKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[2])
         {
             nextTile = tiles[playerPos.x, playerPos.y - 1];
+            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
+            {
+                return;
+            }
             if (!nextTile.generated)
             {
-                tileSelector.ShowMenu();
-                tileSelector.GenerateTiles();
-                tileSelector.requiredDirection = 0;
-                generatingTiles = true;
+                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
+                {
+                    nextTile.generated = true;
+                    nextTile.directions = new bool[4] {true, false, false, false};
+                    player.transform.position += new Vector3(0f, -1f, 0f);
+                    playerPos += new Vector2Int(0, -1);
+                    vaultNumber--;
+                }
+                else
+                {
+                    tileSelector.ShowMenu();
+                    tileSelector.GenerateTiles();
+                    tileSelector.requiredDirection = 0;
+                    generatingTiles = true;
+                }
             }
             else
             {
+                //Check if tile is locked to prevent movement
                 player.transform.position += new Vector3(0f, -1f, 0f);
                 playerPos += new Vector2Int(0, -1);
                 if (nextTile.camera && nextTile.cameraEnabled)
                 {
                     RaiseAlert(nextTile);
                 }
+                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
+                {
+                    Debug.Log("you win");
+                }
             }
         }
         if (keyboard.wKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[0])
         {
             nextTile = tiles[playerPos.x, playerPos.y + 1];
+            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
+            {
+                return;
+            }
             if (!nextTile.generated)
             {
-                tileSelector.ShowMenu();
-                tileSelector.GenerateTiles();
-                tileSelector.requiredDirection = 2;
-                generatingTiles = true;
+                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
+                {
+                    nextTile.generated = true;
+                    nextTile.directions = new bool[4] { false, false, true, false };
+                    player.transform.position += new Vector3(0f, 1f, 0f);
+                    playerPos += new Vector2Int(0, 1);
+                    vaultNumber--;
+                }
+                else
+                {
+                    tileSelector.ShowMenu();
+                    tileSelector.GenerateTiles();
+                    tileSelector.requiredDirection = 2;
+                    generatingTiles = true;
+                }
             }
             else
             {
@@ -143,17 +186,36 @@ public class GridManager : MonoBehaviour
                 {
                     RaiseAlert(nextTile);
                 }
+                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
+                {
+                    Debug.Log("you win");
+                }
             }
         }
         if (keyboard.aKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[3])
         {
             nextTile = tiles[playerPos.x - 1, playerPos.y];
+            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
+            {
+                return;
+            }
             if (!nextTile.generated)
             {
-                tileSelector.ShowMenu();
-                tileSelector.GenerateTiles();
-                tileSelector.requiredDirection = 1;
-                generatingTiles = true;
+                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
+                {
+                    nextTile.generated = true;
+                    nextTile.directions = new bool[4] { false, true, false, false };
+                    player.transform.position += new Vector3(-1f, 0f, 0f);
+                    playerPos += new Vector2Int(-1, 0);
+                    vaultNumber--;
+                }
+                else
+                {
+                    tileSelector.ShowMenu();
+                    tileSelector.GenerateTiles();
+                    tileSelector.requiredDirection = 1;
+                    generatingTiles = true;
+                }
             }
             else
             {
@@ -163,17 +225,36 @@ public class GridManager : MonoBehaviour
                 {
                     RaiseAlert(nextTile);
                 }
+                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
+                {
+                    Debug.Log("you win");
+                }
             }
         }
         if (keyboard.dKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[1])
         {
             nextTile = tiles[playerPos.x + 1, playerPos.y];
+            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
+            {
+                return;
+            }
             if (!nextTile.generated)
             {
-                tileSelector.ShowMenu();
-                tileSelector.GenerateTiles();
-                tileSelector.requiredDirection = 3;
-                generatingTiles = true;
+                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
+                {
+                    nextTile.generated = true;
+                    nextTile.directions = new bool[4] { false, false, false, true };
+                    player.transform.position += new Vector3(1f, 0f, 0f);
+                    playerPos += new Vector2Int(1, 0);
+                    vaultNumber--;
+                }
+                else
+                {
+                    tileSelector.ShowMenu();
+                    tileSelector.GenerateTiles();
+                    tileSelector.requiredDirection = 3;
+                    generatingTiles = true;
+                }
             }
             else
             {
@@ -183,6 +264,26 @@ public class GridManager : MonoBehaviour
                 {
                     RaiseAlert(nextTile);
                 }
+                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
+                {
+                    Debug.Log("you win");
+                }
+            }
+        }
+        if (keyboard.fKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].tileType != TileTypes.Default && tiles[playerPos.x, playerPos.y].remainingUses > 0) //Check for coins too
+        {
+            switch (tiles[playerPos.x, playerPos.y].tileType)
+            {
+                case TileTypes.Control_Room:
+                    if (vaultTiles.Count <= 0) break;
+                    int choice = Random.Range(0, vaultTiles.Count);
+                    vaultTiles[choice].vaultOpen = true;
+                    vaultTiles[choice].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = openVault;
+                    tiles[playerPos.x, playerPos.y].remainingUses--;
+                    vaultTiles.RemoveAt(choice);
+                    break;
+                default:
+                    break;
             }
         }
     }

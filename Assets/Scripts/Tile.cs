@@ -10,6 +10,8 @@ public class Tile
     public bool cameraEnabled;
     public bool[] directions; // 0 - up, 1 - right, 2 - down, 3 - left
     public TileTypes tileType;
+    public bool vaultOpen; //Vault only variable
+    public int remainingUses; //Room action only variable
 
     public Tile(Vector2Int position, GameObject tileObject, TileTypes tileType = TileTypes.Default)
     {
@@ -20,12 +22,15 @@ public class Tile
         cameraEnabled = true;
         directions = new bool[4];
         this.tileType = tileType;
+        vaultOpen = false;
+        remainingUses = 1;
     }
 }
 
 public enum TileTypes
 {
     Default,
+    Start,
     Vault,
     Control_Room,
     Med_Bay,
