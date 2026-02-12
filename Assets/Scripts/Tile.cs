@@ -7,6 +7,7 @@ public class Tile
     public GameObject tileObject;
     public bool generated;
     public bool camera;
+    public bool cameraEnabled;
     public bool[] directions; // 0 - up, 1 - right, 2 - down, 3 - left
     public TileTypes tileType;
 
@@ -16,6 +17,7 @@ public class Tile
         this.tileObject = tileObject;
         generated = false;
         camera = false;
+        cameraEnabled = true;
         directions = new bool[4];
         this.tileType = tileType;
     }

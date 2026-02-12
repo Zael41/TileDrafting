@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,7 @@ public class GridManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
+    [SerializeField] private TMP_Text alertText;
     
     [SerializeField] private List<Tile> testtiles;
 
@@ -25,6 +27,22 @@ public class GridManager : MonoBehaviour
     private Keyboard keyboard;
     private Tile nextTile;
     [HideInInspector] public bool generatingTiles;
+
+    public static GridManager instance;
+
+    private void Awake()
+    {
+        Debug.Log("awake");
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -84,7 +102,7 @@ public class GridManager : MonoBehaviour
         return vaultPos;
     }
 
-    private void Update()
+    private void Update() // There has to be a way to unify all this repeating code
     {
         if (generatingTiles) return;
         if (keyboard.sKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[2])
@@ -101,6 +119,10 @@ public class GridManager : MonoBehaviour
             {
                 player.transform.position += new Vector3(0f, -1f, 0f);
                 playerPos += new Vector2Int(0, -1);
+                if (nextTile.camera && nextTile.cameraEnabled)
+                {
+                    RaiseAlert(nextTile);
+                }
             }
         }
         if (keyboard.wKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[0])
@@ -117,6 +139,10 @@ public class GridManager : MonoBehaviour
             {
                 player.transform.position += new Vector3(0f, 1f, 0f);
                 playerPos += new Vector2Int(0, 1);
+                if (nextTile.camera && nextTile.cameraEnabled)
+                {
+                    RaiseAlert(nextTile);
+                }
             }
         }
         if (keyboard.aKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[3])
@@ -133,6 +159,10 @@ public class GridManager : MonoBehaviour
             {
                 player.transform.position += new Vector3(-1f, 0f, 0f);
                 playerPos += new Vector2Int(-1, 0);
+                if (nextTile.camera && nextTile.cameraEnabled)
+                {
+                    RaiseAlert(nextTile);
+                }
             }
         }
         if (keyboard.dKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[1])
@@ -149,6 +179,10 @@ public class GridManager : MonoBehaviour
             {
                 player.transform.position += new Vector3(1f, 0f, 0f);
                 playerPos += new Vector2Int(1, 0);
+                if (nextTile.camera && nextTile.cameraEnabled)
+                {
+                    RaiseAlert(nextTile);
+                }
             }
         }
     }
@@ -162,5 +196,13 @@ public class GridManager : MonoBehaviour
         nextTile.directions = directions;
         nextTile.tileType = tileType;
         if (camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
+    }
+
+    private void RaiseAlert(Tile nextTile)
+    {
+        alert++;
+        alertText.text = "Alert: " + alert;
+        nextTile.cameraEnabled = false;
+        nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
     }
 }
