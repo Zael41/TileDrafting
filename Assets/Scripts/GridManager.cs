@@ -17,8 +17,10 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int gridSize;
     [SerializeField] private Vector2Int playerPos;
     [SerializeField] private int health;
-    [SerializeField] private int alert;
     [SerializeField] private int vaultNumber;
+    [SerializeField] private int nextAlertCounter;
+    private int toNextAlertLevel;
+    private int alertLevel;
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
@@ -110,7 +112,7 @@ public class GridManager : MonoBehaviour
         return vaultPos;
     }
 
-    private void Update() // There has to be a way to unify all this repeating code
+    private void Update() // There has to be a way to unify all this repeating code, and check for out of bounds
     {
         if (generatingTiles) return;
         if (keyboard.sKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[2])
@@ -301,8 +303,13 @@ public class GridManager : MonoBehaviour
 
     private void RaiseAlert(Tile nextTile)
     {
-        alert++;
-        alertText.text = "Alert: " + alert;
+        toNextAlertLevel++;
+        if (toNextAlertLevel >= nextAlertCounter)
+        {
+            alertLevel++;
+            toNextAlertLevel = 0;
+        }
+        alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
         nextTile.cameraEnabled = false;
         nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
     }
