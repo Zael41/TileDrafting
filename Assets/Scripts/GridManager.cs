@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.U2D;
 
 public class GridManager : MonoBehaviour
@@ -114,166 +115,13 @@ public class GridManager : MonoBehaviour
         return vaultPos;
     }
 
-    private void Update() // There has to be a way to unify all this repeating code, and check for out of bounds, and draft tiles before even moving
+    private void Update()
     {
-        if (generatingTiles) return;
-        if (keyboard.sKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[2])
-        {
-            nextTile = tiles[playerPos.x, playerPos.y - 1];
-            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
-            {
-                return;
-            }
-            if (!nextTile.generated)
-            {
-                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
-                {
-                    nextTile.generated = true;
-                    nextTile.directions = new bool[4] {true, false, false, false};
-                    player.transform.position += new Vector3(0f, -1f, 0f);
-                    playerPos += new Vector2Int(0, -1);
-                    vaultNumber--;
-                }
-                else
-                {
-                    tileSelector.ShowMenu();
-                    tileSelector.GenerateTiles();
-                    tileSelector.requiredDirection = 0;
-                    generatingTiles = true;
-                }
-            }
-            else
-            {
-                //Check if tile is locked to prevent movement
-                player.transform.position += new Vector3(0f, -1f, 0f);
-                playerPos += new Vector2Int(0, -1);
-                if (nextTile.camera && nextTile.cameraEnabled)
-                {
-                    RaiseAlert(nextTile);
-                }
-                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
-                {
-                    Debug.Log("you win");
-                }
-            }
-        }
-        if (keyboard.wKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[0])
-        {
-            nextTile = tiles[playerPos.x, playerPos.y + 1];
-            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
-            {
-                return;
-            }
-            if (!nextTile.generated)
-            {
-                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
-                {
-                    nextTile.generated = true;
-                    nextTile.directions = new bool[4] { false, false, true, false };
-                    player.transform.position += new Vector3(0f, 1f, 0f);
-                    playerPos += new Vector2Int(0, 1);
-                    vaultNumber--;
-                }
-                else
-                {
-                    tileSelector.ShowMenu();
-                    tileSelector.GenerateTiles();
-                    tileSelector.requiredDirection = 2;
-                    generatingTiles = true;
-                }
-            }
-            else
-            {
-                player.transform.position += new Vector3(0f, 1f, 0f);
-                playerPos += new Vector2Int(0, 1);
-                if (nextTile.camera && nextTile.cameraEnabled)
-                {
-                    RaiseAlert(nextTile);
-                }
-                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
-                {
-                    Debug.Log("you win");
-                }
-            }
-        }
-        if (keyboard.aKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[3])
-        {
-            nextTile = tiles[playerPos.x - 1, playerPos.y];
-            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
-            {
-                return;
-            }
-            if (!nextTile.generated)
-            {
-                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
-                {
-                    nextTile.generated = true;
-                    nextTile.directions = new bool[4] { false, true, false, false };
-                    player.transform.position += new Vector3(-1f, 0f, 0f);
-                    playerPos += new Vector2Int(-1, 0);
-                    vaultNumber--;
-                }
-                else
-                {
-                    tileSelector.ShowMenu();
-                    tileSelector.GenerateTiles();
-                    tileSelector.requiredDirection = 1;
-                    generatingTiles = true;
-                }
-            }
-            else
-            {
-                player.transform.position += new Vector3(-1f, 0f, 0f);
-                playerPos += new Vector2Int(-1, 0);
-                if (nextTile.camera && nextTile.cameraEnabled)
-                {
-                    RaiseAlert(nextTile);
-                }
-                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
-                {
-                    Debug.Log("you win");
-                }
-            }
-        }
-        if (keyboard.dKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[1])
-        {
-            nextTile = tiles[playerPos.x + 1, playerPos.y];
-            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
-            {
-                return;
-            }
-            if (!nextTile.generated)
-            {
-                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
-                {
-                    nextTile.generated = true;
-                    nextTile.directions = new bool[4] { false, false, false, true };
-                    player.transform.position += new Vector3(1f, 0f, 0f);
-                    playerPos += new Vector2Int(1, 0);
-                    vaultNumber--;
-                }
-                else
-                {
-                    tileSelector.ShowMenu();
-                    tileSelector.GenerateTiles();
-                    tileSelector.requiredDirection = 3;
-                    generatingTiles = true;
-                }
-            }
-            else
-            {
-                player.transform.position += new Vector3(1f, 0f, 0f);
-                playerPos += new Vector2Int(1, 0);
-                if (nextTile.camera && nextTile.cameraEnabled)
-                {
-                    RaiseAlert(nextTile);
-                }
-                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
-                {
-                    Debug.Log("you win");
-                }
-            }
-        }
+        NewMovement(keyboard.sKey, 2, new Vector2Int(0, -1), 0);
+        NewMovement(keyboard.wKey, 0, new Vector2Int(0, 1), 2);
+        NewMovement(keyboard.aKey, 3, new Vector2Int(-1, 0), 1);
+        NewMovement(keyboard.dKey, 1, new Vector2Int(1, 0), 3);
+
         if (keyboard.fKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].tileType != TileTypes.Default && tiles[playerPos.x, playerPos.y].remainingUses > 0) //Check for coins too
         {
             switch (tiles[playerPos.x, playerPos.y].tileType)
@@ -300,6 +148,61 @@ public class GridManager : MonoBehaviour
                     break;
             }
         }
+    }
+
+    private void NewMovement(KeyControl key, int directionsIndex, Vector2Int directionVector, int oppositeDirectionIndex)
+    {
+        // Draft tiles before even moving
+        if (generatingTiles) return;
+        if (key.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[directionsIndex])
+        {
+            Vector2Int nextTilePosition = playerPos + directionVector;
+            if (!CheckBounds(nextTilePosition)) return;
+            nextTile = tiles[nextTilePosition.x, nextTilePosition.y];
+            if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
+            {
+                return;
+            }
+            if (!nextTile.generated)
+            {
+                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
+                {
+                    nextTile.generated = true;
+                    nextTile.directions = new bool[4] { false, false, false, false };
+                    nextTile.directions[oppositeDirectionIndex] = true;
+                    player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
+                    playerPos += directionVector;
+                    vaultNumber--;
+                }
+                else
+                {
+                    tileSelector.ShowMenu();
+                    tileSelector.GenerateTiles();
+                    tileSelector.requiredDirection = oppositeDirectionIndex;
+                    generatingTiles = true;
+                }
+            }
+            else //Need to check if both directions are valid to let you move
+            {
+                player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
+                playerPos += directionVector;
+                if (nextTile.camera && nextTile.cameraEnabled)
+                {
+                    RaiseAlert(nextTile);
+                }
+                if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
+                {
+                    Debug.Log("you win");
+                }
+            }
+        }
+    }
+
+    private bool CheckBounds(Vector2Int nextTilePos)
+    {
+        if (nextTilePos.x < 0 || nextTilePos.x >= gridSize) return false;
+        if (nextTilePos.y < 0 || nextTilePos.y >= gridSize) return false;
+        return true;
     }
 
     public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions, TileTypes tileType)
