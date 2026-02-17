@@ -10,6 +10,7 @@ public class Tile
     public bool cameraEnabled;
     public bool[] directions; // 0 - up, 1 - right, 2 - down, 3 - left
     public TileTypes tileType;
+    public int gearAmount;
     public bool vaultOpen; //Vault only variable
     public int remainingUses; //Room action only variable
 
@@ -24,6 +25,7 @@ public class Tile
         this.tileType = tileType;
         vaultOpen = false;
         remainingUses = 1;
+        gearAmount = 0;
     }
 }
 

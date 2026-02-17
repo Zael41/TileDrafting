@@ -14,6 +14,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private Sprite lockedVault;
     [SerializeField] private Sprite openVault;
     [SerializeField] private Sprite startTile;
+    [SerializeField] private Sprite oneGearSprite;
+    [SerializeField] private Sprite twoGearSprite;
 
     [Header("Game Variables")]
     [SerializeField] private int gridSize;
@@ -21,6 +23,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int health;
     [SerializeField] private int vaultNumber;
     [SerializeField] private int nextAlertCounter;
+    [SerializeField] private int gearAmount;
     private int toNextAlertLevel;
     private int alertLevel;
 
@@ -28,6 +31,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TileSelector tileSelector;
     [SerializeField] private TMP_Text alertText;
     [SerializeField] private TMP_Text healthText;
+    [SerializeField] private TMP_Text gearText;
     
     [SerializeField] private List<Tile> testtiles;
 
@@ -188,6 +192,13 @@ public class GridManager : MonoBehaviour
                 {
                     RaiseAlert(nextTile);
                 }
+                if (nextTile.gearAmount > 0)
+                {
+                    gearAmount += nextTile.gearAmount;
+                    nextTile.gearAmount = 0;
+                    nextTile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    gearText.text = "Gears: " + gearAmount;
+                }
                 if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
                 {
                     Debug.Log("you win");
@@ -203,7 +214,7 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions, TileTypes tileType)
+    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions, TileTypes tileType, int gearAmount)
     {
         nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = sprite;
         nextTile.tileObject.transform.GetChild(0).rotation = rotation;
@@ -211,7 +222,27 @@ public class GridManager : MonoBehaviour
         nextTile.camera = camera;
         nextTile.directions = directions;
         nextTile.tileType = tileType;
+        nextTile.gearAmount = gearAmount;
+        SetTileGears(nextTile);
         if (camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
+    }
+
+    public void SetTileGears(Tile tile)
+    {
+        if (tile.gearAmount == 0)
+        {
+            tile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+        }
+        else if (tile.gearAmount == 1)
+        {
+            tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+            tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = oneGearSprite;
+        }
+        else
+        {
+            tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+            tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = twoGearSprite;
+        }
     }
 
     private void RaiseAlert(Tile nextTile)

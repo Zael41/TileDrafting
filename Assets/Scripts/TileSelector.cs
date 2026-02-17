@@ -8,6 +8,8 @@ public class TileSelector : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
     [SerializeField] private TMP_Text title;
+    [SerializeField] private Sprite oneGearSprite;
+    [SerializeField] private Sprite twoGearSprite;
     [SerializeField] private List<UITiles> UITiles; //Change this for another custom class called "UITiles" that also stores their info
     [SerializeField] private List<AvailableTiles> availableTiles;
     [SerializeField] private List<SelectableTiles> selectableTiles;
@@ -51,7 +53,7 @@ public class TileSelector : MonoBehaviour
             }
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection]) //Checks if it connects
             {
-                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType);
+                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
                 StopSelection();
                 //HideMenu();
                 GenerateTiles();
@@ -100,8 +102,28 @@ public class TileSelector : MonoBehaviour
             obj.tileType = randomTile.tileType;
             obj.camera = randomTile.camera;
             obj.directions = randomTile.directions;
+            obj.gearAmount = randomTile.gearAmount;
+            SetUITileGears(obj);
             if (randomTile.camera) obj.tileObject.transform.GetChild(2).gameObject.SetActive(true);
             else obj.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+        }
+    }
+
+    public void SetUITileGears(UITiles tile)
+    {
+        if (tile.gearAmount == 0)
+        {
+            tile.tileObject.transform.GetChild(3).gameObject.SetActive(false);
+        }
+        else if (tile.gearAmount == 1)
+        {
+            tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
+            tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = oneGearSprite;
+        }
+        else
+        {
+            tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
+            tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = twoGearSprite;
         }
     }
 
@@ -173,4 +195,5 @@ public class UITiles // The three tiles that appear on the screen
     public TileTypes tileType;
     public bool camera;
     public bool[] directions;
+    public int gearAmount;
 }
