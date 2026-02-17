@@ -60,11 +60,6 @@ public class GridManager : MonoBehaviour
     private void Start()
     {
         Vector2Int vault1Pos = GetRandomVaultPos();
-        Vector2Int vault2Pos = GetRandomVaultPos();
-        while (vault2Pos == vault1Pos)
-        {
-            vault2Pos = GetRandomVaultPos();
-        }
         testtiles = new List<Tile>();
         vaultTiles = new List<Tile>();
         tiles = new Tile[gridSize,gridSize];
@@ -83,12 +78,6 @@ public class GridManager : MonoBehaviour
                 else if (i == vault1Pos.x && j == vault1Pos.y)
                 {
                     tiles[i, j] = new Tile(vault1Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), TileTypes.Vault);
-                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
-                    vaultTiles.Add(tiles[i, j]);
-                }
-                else if (i == vault2Pos.x && j == vault2Pos.y)
-                {
-                    tiles[i, j] = new Tile(vault2Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), TileTypes.Vault);
                     tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
                     vaultTiles.Add(tiles[i, j]);
                 }
@@ -121,10 +110,10 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
-        NewMovement(keyboard.sKey, 2, new Vector2Int(0, -1), 0);
-        NewMovement(keyboard.wKey, 0, new Vector2Int(0, 1), 2);
-        NewMovement(keyboard.aKey, 3, new Vector2Int(-1, 0), 1);
-        NewMovement(keyboard.dKey, 1, new Vector2Int(1, 0), 3);
+        NewMovement(keyboard.downArrowKey, 2, new Vector2Int(0, -1), 0);
+        NewMovement(keyboard.upArrowKey, 0, new Vector2Int(0, 1), 2);
+        NewMovement(keyboard.leftArrowKey, 3, new Vector2Int(-1, 0), 1);
+        NewMovement(keyboard.rightArrowKey, 1, new Vector2Int(1, 0), 3);
 
         if (keyboard.fKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].tileType != TileTypes.Default && tiles[playerPos.x, playerPos.y].remainingUses > 0) //Check for coins too
         {
@@ -158,7 +147,7 @@ public class GridManager : MonoBehaviour
     {
         // Draft tiles before even moving
         if (generatingTiles) return;
-        if (key.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].directions[directionsIndex])
+        if (key.wasReleasedThisFrame && tiles[playerPos.x, playerPos.y].directions[directionsIndex])
         {
             Vector2Int nextTilePosition = playerPos + directionVector;
             if (!CheckBounds(nextTilePosition)) return;
