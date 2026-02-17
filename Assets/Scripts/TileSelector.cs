@@ -21,13 +21,9 @@ public class TileSelector : MonoBehaviour
         selectableTiles = new List<SelectableTiles>();
         foreach (AvailableTiles tile in availableTiles)
         {
-            for (int i = 0; i < tile.amountWithoutCamera; i++)
+            foreach (AvailableTileInfo tileInfo in tile.tileInfo)
             {
-                selectableTiles.Add(new SelectableTiles(tile.tileSprite, tile.tileType, false, tile.directions));
-            }
-            for (int i = 0; i < tile.amountWithCamera; i++)
-            {
-                selectableTiles.Add(new SelectableTiles(tile.tileSprite, tile.tileType, true, tile.directions));
+                selectableTiles.Add(new SelectableTiles(tile.tileSprite, tile.tileType, tileInfo.camera, tile.directions, tileInfo.gearAmount));
             }
         }
         keyboard = Keyboard.current;
@@ -135,8 +131,20 @@ public class AvailableTiles //Used by the developer to tell the game how many ti
     public Sprite tileSprite;
     public TileTypes tileType;
     public bool[] directions;
-    public int amountWithoutCamera;
-    public int amountWithCamera;
+    public List<AvailableTileInfo> tileInfo;
+}
+
+[System.Serializable]
+public class AvailableTileInfo // Info of how many tiles of that type have cameras or gears
+{
+    public bool camera;
+    public int gearAmount;
+
+    public AvailableTileInfo(bool camera, int gearAmount)
+    {
+        this.camera = camera;
+        this.gearAmount = gearAmount;
+    }
 }
 
 [System.Serializable]
@@ -146,13 +154,15 @@ public class SelectableTiles //The actual X amount of tiles that the player will
     public TileTypes tileType;
     public bool camera;
     public bool[] directions;
+    public int gearAmount;
 
-    public SelectableTiles(Sprite tileSprite, TileTypes tileType, bool camera, bool[] directions)
+    public SelectableTiles(Sprite tileSprite, TileTypes tileType, bool camera, bool[] directions, int gearAmount)
     {
         this.tileSprite = tileSprite;
         this.tileType = tileType;
         this.camera = camera;
         this.directions = directions;
+        this.gearAmount = gearAmount;
     }
 }
 
