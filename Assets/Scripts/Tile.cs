@@ -36,5 +36,8 @@ public enum TileTypes
     Vault,
     Control_Room,
     Med_Bay,
-    Surveillance
+    Surveillance,
+    Chief_Office,
+    Archives,
+    Key_Room
 }

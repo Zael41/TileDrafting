@@ -2083,20 +2083,20 @@ MonoBehaviour:
       gearAmount: 1
     - camera: 1
       gearAmount: 2
-  - tileSprite: {fileID: -870483793684181862, guid: ac21683b5a659fe48a196253f7e4fec2, type: 3}
-    tileType: 0
+  - tileSprite: {fileID: -6318676458784481354, guid: 4b1e4613fd50f9741b1ffed02c0a183b, type: 3}
+    tileType: 6
     directions: 01000000
     tileInfo:
     - camera: 0
       gearAmount: 0
   - tileSprite: {fileID: 4867661476491135586, guid: ff96a42414cc32547ac44b5cf23ae6ac, type: 3}
-    tileType: 0
+    tileType: 7
     directions: 01000100
     tileInfo:
     - camera: 0
       gearAmount: 0
   - tileSprite: {fileID: 9004040481418575084, guid: f87d2c21dbec4574991f4a3f4f5c8874, type: 3}
-    tileType: 0
+    tileType: 8
     directions: 01010100
     tileInfo:
     - camera: 1
