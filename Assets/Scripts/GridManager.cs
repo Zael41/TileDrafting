@@ -176,9 +176,7 @@ public class GridManager : MonoBehaviour
                 }
                 else
                 {
-                    tileSelector.ShowMenu();
-                    tileSelector.GenerateTiles();
-                    tileSelector.requiredDirection = oppositeDirectionIndex;
+                    tileSelector.StartSelection(oppositeDirectionIndex);
                     generatingTiles = true;
                 }
             }

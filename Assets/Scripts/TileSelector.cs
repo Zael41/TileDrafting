@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -6,12 +7,14 @@ using UnityEngine.UI;
 public class TileSelector : MonoBehaviour
 {
     [SerializeField] private GridManager gridManager;
+    [SerializeField] private TMP_Text title;
     [SerializeField] private List<UITiles> UITiles; //Change this for another custom class called "UITiles" that also stores their info
     [SerializeField] private List<AvailableTiles> availableTiles;
     [SerializeField] private List<SelectableTiles> selectableTiles;
     private int selectedTile;
     private Keyboard keyboard;
     public int requiredDirection;
+    public bool currentlySelecting;
 
     private void Start()
     {
@@ -29,11 +32,12 @@ public class TileSelector : MonoBehaviour
         }
         keyboard = Keyboard.current;
         selectedTile = -1;
+        GenerateTiles();
     }
 
     private void Update()
     {
-        if (selectedTile != -1)
+        if (selectedTile != -1 && currentlySelecting)
         {
             if (keyboard.downArrowKey.wasPressedThisFrame)
             {
@@ -52,9 +56,9 @@ public class TileSelector : MonoBehaviour
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection]) //Checks if it connects
             {
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType);
-                selectedTile = -1;
-                HideMenu();
-                gridManager.generatingTiles = false;
+                StopSelection();
+                //HideMenu();
+                GenerateTiles();
                 //Remove the placed tile from the pool
             }
             if (keyboard.rKey.wasPressedThisFrame)
@@ -103,8 +107,25 @@ public class TileSelector : MonoBehaviour
             if (randomTile.camera) obj.tileObject.transform.GetChild(2).gameObject.SetActive(true);
             else obj.tileObject.transform.GetChild(2).gameObject.SetActive(false);
         }
+    }
+
+    public void StartSelection(int requiredDirection)
+    {
+        this.requiredDirection = requiredDirection;
+        currentlySelecting = true;
         selectedTile = 0;
         UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
+        title.text = "Choose One: ";
+    }
+
+    public void StopSelection()
+    {
+        requiredDirection = -1;
+        currentlySelecting = false;
+        UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(false);
+        selectedTile = -1;
+        gridManager.generatingTiles = false;
+        title.text = "Next Choices";
     }
 }
 
