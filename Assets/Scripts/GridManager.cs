@@ -24,6 +24,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int vaultNumber;
     [SerializeField] private int nextAlertCounter;
     [SerializeField] private int gearAmount;
+    [SerializeField] private int rerolls;
+    [SerializeField] private int holds;
     private int toNextAlertLevel;
     private int alertLevel;
 
@@ -32,11 +34,12 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TMP_Text alertText;
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private TMP_Text gearText;
-    
+    [SerializeField] private TMP_Text rerollsText;
+    [SerializeField] private TMP_Text holdsText;
+
     [SerializeField] private List<Tile> testtiles;
 
     private Tile[,] tiles;
-    private List<Tile> vaultTiles;
     private Keyboard keyboard;
     private Tile nextTile;
     [HideInInspector] public bool generatingTiles;
@@ -59,9 +62,7 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
-        Vector2Int vault1Pos = GetRandomVaultPos();
         testtiles = new List<Tile>();
-        vaultTiles = new List<Tile>();
         tiles = new Tile[gridSize,gridSize];
         for (int i = 0; i < gridSize; i++)
         {
@@ -74,12 +75,6 @@ public class GridManager : MonoBehaviour
                     tiles[i, j].directions = new bool[4] { true, true, true, true };
                     tiles[i, j].generated = true;
                     tiles[i,j].tileType = TileTypes.Start;
-                }
-                else if (i == vault1Pos.x && j == vault1Pos.y)
-                {
-                    tiles[i, j] = new Tile(vault1Pos, Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform), TileTypes.Vault);
-                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
-                    vaultTiles.Add(tiles[i, j]);
                 }
                 else
                 {
@@ -120,22 +115,38 @@ public class GridManager : MonoBehaviour
             switch (tiles[playerPos.x, playerPos.y].tileType)
             {
                 case TileTypes.Control_Room:
-                    if (vaultTiles.Count <= 0) break;
-                    int choice = Random.Range(0, vaultTiles.Count);
-                    vaultTiles[choice].vaultOpen = true;
-                    vaultTiles[choice].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = openVault;
+                    if (gearAmount < 2) break;
+                    SpawnVault(); // Needs to account for directions
                     tiles[playerPos.x, playerPos.y].remainingUses--;
-                    vaultTiles.RemoveAt(choice);
+                    gearAmount -= 2;
                     break;
                 case TileTypes.Surveillance:
+                    if (gearAmount < 1) break;
                     toNextAlertLevel = 0;
                     alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
+                    gearAmount--;
                     break;
                 case TileTypes.Med_Bay:
+                    if (gearAmount < 2) break;
                     health++;
                     healthText.text = "Health: " + health;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
+                    gearAmount -= 2;
+                    break;
+                case TileTypes.Chief_Office:
+                    if (gearAmount < 1) break;
+                    rerolls += 2;
+                    rerollsText.text = "Rerolls: " + rerolls;
+                    tiles[playerPos.x, playerPos.y].remainingUses--;
+                    gearAmount--;
+                    break;
+                case TileTypes.Archives:
+                    if (gearAmount < 1) break;
+                    holds++;
+                    holdsText.text = "Holds: " + holds;
+                    tiles[playerPos.x, playerPos.y].remainingUses--;
+                    gearAmount--;
                     break;
                 default:
                     break;
@@ -194,6 +205,17 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void SpawnVault()
+    {
+        Vector2Int vault1Pos = GetRandomVaultPos();
+        while (tiles[vault1Pos.x, vault1Pos.y].generated)
+        {
+            vault1Pos = GetRandomVaultPos();
+        }
+        tiles[vault1Pos.x, vault1Pos.y].tileType = TileTypes.Vault;
+        tiles[vault1Pos.x, vault1Pos.y].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
     }
 
     private bool CheckBounds(Vector2Int nextTilePos)
