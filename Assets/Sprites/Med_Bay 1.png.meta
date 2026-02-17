@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ac21683b5a659fe48a196253f7e4fec2
+guid: 3dcf84edd1cef5249bffb5253afa1473
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -870483793684181862
-    second: Surveillance_Room 1_0
+      213: -8874171226091287919
+    second: Med_Bay 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Surveillance_Room 1_0
+      name: Med_Bay 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a9c48b60a9b6be3f0800000000000000
-      internalID: -870483793684181862
+      spriteID: 19a06d8894c98d480800000000000000
+      internalID: -8874171226091287919
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Surveillance_Room 1_0: -870483793684181862
+      Med_Bay 1_0: -8874171226091287919
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -1848,9 +1848,9 @@ MonoBehaviour:
     tileInfo:
     - camera: 0
       gearAmount: 0
-  - tileSprite: {fileID: -452238368137487410, guid: 218d44f3753ae10459bc556ddabf5c7d, type: 3}
+  - tileSprite: {fileID: -870483793684181862, guid: ac21683b5a659fe48a196253f7e4fec2, type: 3}
     tileType: 5
-    directions: 01010100
+    directions: 01000000
     tileInfo:
     - camera: 0
       gearAmount: 0
@@ -1862,6 +1862,24 @@ MonoBehaviour:
       gearAmount: 1
     - camera: 1
       gearAmount: 2
+  - tileSprite: {fileID: 1796906307087948806, guid: 2d475adf53e99bf4bb7320d3503d1c9e, type: 3}
+    tileType: 0
+    directions: 01000000
+    tileInfo:
+    - camera: 0
+      gearAmount: 0
+  - tileSprite: {fileID: 1796906307087948806, guid: 2d475adf53e99bf4bb7320d3503d1c9e, type: 3}
+    tileType: 0
+    directions: 01000100
+    tileInfo:
+    - camera: 0
+      gearAmount: 0
+  - tileSprite: {fileID: 1796906307087948806, guid: 2d475adf53e99bf4bb7320d3503d1c9e, type: 3}
+    tileType: 0
+    directions: 01010100
+    tileInfo:
+    - camera: 1
+      gearAmount: 0
   selectableTiles: []
   requiredDirection: 0
   currentlySelecting: 0
