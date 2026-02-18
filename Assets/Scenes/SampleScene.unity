@@ -2295,7 +2295,7 @@ MonoBehaviour:
       gearAmount: 1
   - tileSprite: {fileID: -6760344959024310173, guid: 063b6209da9e9554ebf61e62d0803aec, type: 3}
     tileType: 0
-    directions: 01000001
+    directions: 01010000
     tileInfo:
     - camera: 0
       gearAmount: 0
@@ -2311,7 +2311,7 @@ MonoBehaviour:
       gearAmount: 0
   - tileSprite: {fileID: -2989596715072542889, guid: d20395bdfa4d5914ab3856165b1932bf, type: 3}
     tileType: 0
-    directions: 01010001
+    directions: 01010100
     tileInfo:
     - camera: 0
       gearAmount: 0
