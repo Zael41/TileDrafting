@@ -250,7 +250,7 @@ public class GridManager : MonoBehaviour
         tiles[vault1Pos.x, vault1Pos.y].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
     }
 
-    private bool CheckBounds(Vector2Int nextTilePos)
+    public bool CheckBounds(Vector2Int nextTilePos)
     {
         if (nextTilePos.x < 0 || nextTilePos.x >= gridSize) return false;
         if (nextTilePos.y < 0 || nextTilePos.y >= gridSize) return false;
