@@ -19,7 +19,7 @@ public class GridManager : MonoBehaviour
 
     [Header("Game Variables")]
     [SerializeField] private int gridSize;
-    [SerializeField] private Vector2Int playerPos;
+    public Vector2Int playerPos;
     [SerializeField] private int health;
     [SerializeField] private int vaultNumber;
     [SerializeField] private int nextAlertCounter;
@@ -39,7 +39,8 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private List<Tile> testtiles;
 
-    private Tile[,] tiles;
+    public Tile[,] tiles;
+    [SerializeField] private List<Guard> guards;
     private Keyboard keyboard;
     private Tile nextTile;
     [HideInInspector] public bool generatingTiles;
@@ -64,6 +65,7 @@ public class GridManager : MonoBehaviour
     {
         testtiles = new List<Tile>();
         tiles = new Tile[gridSize,gridSize];
+        guards = new List<Guard>();
         for (int i = 0; i < gridSize; i++)
         {
             for(int j = 0; j < gridSize; j++)
@@ -200,6 +202,13 @@ public class GridManager : MonoBehaviour
             {
                 player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
                 playerPos += directionVector;
+                if (guards.Count > 0)
+                {
+                    foreach (var guard in guards)
+                    {
+                        guard.Movement();
+                    }
+                }
                 if (nextTile.camera && nextTile.cameraEnabled)
                 {
                     RaiseAlert(nextTile);
@@ -280,7 +289,8 @@ public class GridManager : MonoBehaviour
             {
                 randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
             }
-            Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
+            GameObject g = Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
+            guards.Add(g.GetComponent<Guard>());
 
         }
         UpdateUI();

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4480173158251935184}
   - component: {fileID: 6108261926441378888}
+  - component: {fileID: 2000753718088363226}
   m_Layer: 0
   m_Name: Guard
   m_TagString: Untagged
@@ -90,3 +91,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2000753718088363226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5508083439399292406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1ae20b7a135844798f6fde6a8b4921, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Guard
+  availableDirections:
+  - {x: 0, y: 1}
+  - {x: 1, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: 0}
