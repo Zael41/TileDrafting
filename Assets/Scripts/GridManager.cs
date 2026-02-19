@@ -110,7 +110,7 @@ public class GridManager : MonoBehaviour
         NewMovement(keyboard.leftArrowKey, 3, new Vector2Int(-1, 0), 1);
         NewMovement(keyboard.rightArrowKey, 1, new Vector2Int(1, 0), 3);
 
-        if (keyboard.fKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].tileType != TileTypes.Default && tiles[playerPos.x, playerPos.y].remainingUses > 0) //Check for coins too
+        if (keyboard.fKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].tileType != TileTypes.Default && tiles[playerPos.x, playerPos.y].remainingUses > 0 && !generatingTiles)
         {
             switch (tiles[playerPos.x, playerPos.y].tileType)
             {
@@ -123,35 +123,47 @@ public class GridManager : MonoBehaviour
                 case TileTypes.Surveillance:
                     if (gearAmount < 1) break;
                     toNextAlertLevel = 0;
-                    alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
                     break;
                 case TileTypes.Med_Bay:
                     if (gearAmount < 2) break;
                     health++;
-                    healthText.text = "Health: " + health;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     break;
                 case TileTypes.Chief_Office:
                     if (gearAmount < 1) break;
                     rerolls += 2;
-                    rerollsText.text = "Rerolls: " + rerolls;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
                     break;
                 case TileTypes.Archives:
                     if (gearAmount < 1) break;
                     holds++;
-                    holdsText.text = "Holds: " + holds;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
                     break;
                 default:
                     break;
             }
+            UpdateUI();
         }
+        if (keyboard.qKey.wasPressedThisFrame && rerolls > 0 && !generatingTiles)
+        {
+            tileSelector.GenerateTiles();
+            rerolls--;
+            UpdateUI();
+        }
+    }
+
+    private void UpdateUI()
+    {
+        alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
+        healthText.text = "Health: " + health;
+        gearText.text = "Gears: " + gearAmount;
+        rerollsText.text = "Rerolls: " + rerolls;
+        holdsText.text = "Holds: " + holds;
     }
 
     private void NewMovement(KeyControl key, int directionsIndex, Vector2Int directionVector, int oppositeDirectionIndex)
@@ -197,7 +209,7 @@ public class GridManager : MonoBehaviour
                     gearAmount += nextTile.gearAmount;
                     nextTile.gearAmount = 0;
                     nextTile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                    gearText.text = "Gears: " + gearAmount;
+                    UpdateUI();
                 }
                 if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
                 {
@@ -271,7 +283,7 @@ public class GridManager : MonoBehaviour
             Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
 
         }
-        alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
+        UpdateUI();
         nextTile.cameraEnabled = false;
         nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
     }
