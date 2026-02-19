@@ -4,17 +4,18 @@ using UnityEngine;
 public class Guard : MonoBehaviour
 {
     private Vector2Int currentPos;
-    private Vector2Int lastDirection;
-    private int moveCounter;
+    private int lastDirection;
+    private int moveCounter; //Need to implement this
     [SerializeField] private List<Vector2Int> availableDirections;
 
-    public void Movement()
+    public bool Movement(Vector2Int prevPlayerPos)
     {
+        bool collided = false;
         //Debug.Log(transform.position);
         currentPos = new Vector2Int((int)(transform.position.x), (int)(transform.position.y));
         //Debug.Log(currentPos);
         int manhattanDist = ManhattanDistance(currentPos, GridManager.instance.playerPos);
-        manhattanDist = 0;
+        manhattanDist = 0; // Only for testing
         if (manhattanDist <= 5)
         {
             int randomIndex = Random.Range(0, availableDirections.Count);
@@ -23,17 +24,36 @@ public class Guard : MonoBehaviour
             Vector2Int nextTilePos = new Vector2Int(currentPos.x + availableDirections[randomIndex].x, currentPos.y + availableDirections[randomIndex].y);
             //Debug.Log(nextTilePos);
             Tile nextTile = GridManager.instance.tiles[nextTilePos.x, nextTilePos.y];
+            int lastDirectionCounter = 0;
             while (!nextTile.generated || (!nextTile.directions[GetOppositeDirection(randomIndex)] || !GridManager.instance.tiles[currentPos.x, currentPos.y].directions[randomIndex]))
             {
                 randomIndex = Random.Range(0, availableDirections.Count);
+                /*if (randomIndex == lastDirection && lastDirectionCounter < 5) //Prevent going back unless necessary or unlucky
+                {
+                    lastDirectionCounter++;
+                    continue;
+                }*/
                 nextTilePos = new Vector2Int(currentPos.x + availableDirections[randomIndex].x, currentPos.y + availableDirections[randomIndex].y);
                 nextTile = GridManager.instance.tiles[nextTilePos.x, nextTilePos.y];
             }
             Debug.Log(nextTile.generated);
-            Debug.Log(randomIndex + " (" + nextTilePos.x + ", " + nextTilePos.y + ")"); 
+            Debug.Log(randomIndex + " (" + nextTilePos.x + ", " + nextTilePos.y + ")");
+            if (currentPos == GridManager.instance.playerPos && prevPlayerPos == nextTilePos) //Passing damage
+            {
+                GridManager.instance.TakeDamage();
+                collided = true;
+            }
+            if (nextTilePos == GridManager.instance.playerPos) //Direct hit damage
+            {
+                GridManager.instance.TakeDamage();
+                collided = true;
+            }
             transform.position = new Vector3(nextTilePos.x, nextTilePos.y, 0f);
             currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
+            lastDirection = randomIndex;
         }
+        // Add pathfinding
+        return collided;
     }
 
     private int GetOppositeDirection(int direction)
