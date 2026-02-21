@@ -40,7 +40,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<Tile> testtiles;
 
     public Tile[,] tiles;
-    [SerializeField] private List<Guard> guards;
+    public List<Guard> guards;
     private Keyboard keyboard;
     private Tile nextTile;
     [HideInInspector] public bool generatingTiles;
@@ -200,13 +200,24 @@ public class GridManager : MonoBehaviour
             }
             else //Need to check if both directions are valid to let you move
             {
+                Vector2Int previousPos = playerPos;
                 player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
                 playerPos += directionVector;
                 if (guards.Count > 0)
                 {
+                    List<Guard> guardsThatCollided = new List<Guard>();
                     foreach (var guard in guards)
                     {
-                        guard.Movement();
+                        bool collided = guard.Movement(previousPos);
+                        if (collided) guardsThatCollided.Add(guard);
+                    }
+                    if (guardsThatCollided.Count > 0)
+                    {
+                        foreach (var g in guardsThatCollided)
+                        {
+                            guards.Remove(g);
+                            Destroy(g.gameObject);
+                        }
                     }
                 }
                 if (nextTile.camera && nextTile.cameraEnabled)
@@ -239,7 +250,7 @@ public class GridManager : MonoBehaviour
         tiles[vault1Pos.x, vault1Pos.y].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
     }
 
-    private bool CheckBounds(Vector2Int nextTilePos)
+    public bool CheckBounds(Vector2Int nextTilePos)
     {
         if (nextTilePos.x < 0 || nextTilePos.x >= gridSize) return false;
         if (nextTilePos.y < 0 || nextTilePos.y >= gridSize) return false;
@@ -296,5 +307,11 @@ public class GridManager : MonoBehaviour
         UpdateUI();
         nextTile.cameraEnabled = false;
         nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
+    }
+
+    public void TakeDamage()
+    {
+        health--;
+        UpdateUI();
     }
 }
