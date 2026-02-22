@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3dcf84edd1cef5249bffb5253afa1473
+guid: cebea880cf3e1654c846a823494265a9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8874171226091287919
-    second: Med_Bay 1_0
+      213: -7684091791772365814
+    second: DraftTileFrame_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Med_Bay 1_0
+      name: DraftTileFrame_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1000
-        height: 1000
+        width: 199
+        height: 199
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 19a06d8894c98d480800000000000000
-      internalID: -8874171226091287919
+      spriteID: a0cc9e93a3f9c5590800000000000000
+      internalID: -7684091791772365814
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Med_Bay 1_0: -8874171226091287919
+      DraftTileFrame_0: -7684091791772365814
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
