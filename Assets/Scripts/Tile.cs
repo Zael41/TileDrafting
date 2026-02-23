@@ -14,6 +14,12 @@ public class Tile
     public bool vaultOpen; //Vault only variable
     public int remainingUses; //Room action only variable
 
+    //Pathfinding
+    public int gCost;
+    public int hCost;
+    public int fCost;
+    public Tile path;
+
     public Tile(Vector2Int position, GameObject tileObject, TileTypes tileType = TileTypes.Default)
     {
         this.position = position;
@@ -26,6 +32,10 @@ public class Tile
         vaultOpen = false;
         remainingUses = 1;
         gearAmount = 0;
+        gCost = int.MaxValue;
+        hCost = int.MaxValue;
+        fCost = int.MaxValue;
+        path = null;
     }
 }
 
