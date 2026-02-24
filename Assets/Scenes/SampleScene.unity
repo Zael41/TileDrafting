@@ -2701,7 +2701,17 @@ MonoBehaviour:
   guard: {fileID: 5508083439399292406, guid: 0c71e7a7edba1c1489ca73fa78e6453f, type: 3}
   lockedVault: {fileID: -5318236274941143710, guid: 253a200b77d3a6948950f9c49020a586, type: 3}
   openVault: {fileID: 6377618058977086936, guid: 5d1c9fc02279a204a8b00127a7db9232, type: 3}
-  startTile: {fileID: 339172498047753876, guid: 562abdefe0a83874eb99a514dc4c7833, type: 3}
+  startTiles:
+  - tileSprite: {fileID: -2751812201766956538, guid: af1c7564335db0349a274e9b4889b85a, type: 3}
+    directions: 01010000
+  - tileSprite: {fileID: 339172498047753876, guid: 562abdefe0a83874eb99a514dc4c7833, type: 3}
+    directions: 01010101
+  - tileSprite: {fileID: -2070690752018033262, guid: 275817fd6a34d5a4b9da081ccf2addb6, type: 3}
+    directions: 01000000
+  - tileSprite: {fileID: 5966380550528757008, guid: 0f98b31dc57848149b453ffb01090a56, type: 3}
+    directions: 01000100
+  - tileSprite: {fileID: -5453650067353483624, guid: 21931b4ad5e123c4db1c78d8e740d04f, type: 3}
+    directions: 01010100
   oneGearSprite: {fileID: -5385955565826970688, guid: dd533bb4c442ee04abcc3358faf3fee6, type: 3}
   twoGearSprite: {fileID: 21300000, guid: 71bf1f8e0618a9343beaa16d21576ffd, type: 3}
   gridSize: 9
@@ -2954,16 +2964,34 @@ MonoBehaviour:
     camera: 0
     directions: 
     gearAmount: 0
+    tileFromList:
+      tileSprite: {fileID: 0}
+      tileType: 0
+      camera: 0
+      directions: 
+      gearAmount: 0
   - tileObject: {fileID: 1889110703}
     tileType: 0
     camera: 0
     directions: 
     gearAmount: 0
+    tileFromList:
+      tileSprite: {fileID: 0}
+      tileType: 0
+      camera: 0
+      directions: 
+      gearAmount: 0
   - tileObject: {fileID: 1724332630}
     tileType: 0
     camera: 0
     directions: 
     gearAmount: 0
+    tileFromList:
+      tileSprite: {fileID: 0}
+      tileType: 0
+      camera: 0
+      directions: 
+      gearAmount: 0
   availableTiles:
   - tileSprite: {fileID: 5120224674601135964, guid: 3ce6548a9b2045349a5458828e19a336, type: 3}
     tileType: 0

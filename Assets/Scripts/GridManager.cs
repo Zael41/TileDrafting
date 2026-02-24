@@ -13,7 +13,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private GameObject guard;
     [SerializeField] private Sprite lockedVault;
     [SerializeField] private Sprite openVault;
-    [SerializeField] private Sprite startTile;
+    [SerializeField] private List<StartTile> startTiles;
     [SerializeField] private Sprite oneGearSprite;
     [SerializeField] private Sprite twoGearSprite;
 
@@ -75,9 +75,10 @@ public class GridManager : MonoBehaviour
             {
                 if (i == 4 && j == 4) //Change this if grid size changes
                 {
+                    StartTile randomStartTile = startTiles[Random.Range(0, startTiles.Count)];
                     tiles[i, j] = new Tile(new Vector2Int(i, j), Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform));
-                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = startTile;
-                    tiles[i, j].directions = new bool[4] { true, true, true, true };
+                    tiles[i, j].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = randomStartTile.tileSprite;
+                    tiles[i, j].directions = randomStartTile.directions;
                     tiles[i, j].generated = true;
                     tiles[i,j].tileType = TileTypes.Start;
                 }
@@ -346,4 +347,11 @@ public class GridManager : MonoBehaviour
         health--;
         UpdateUI();
     }
+}
+
+[System.Serializable]
+public class StartTile
+{
+    public Sprite tileSprite;
+    public bool[] directions; // 0 - up, 1 - right, 2 - down, 3 - left
 }
