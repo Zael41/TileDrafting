@@ -51,13 +51,13 @@ public class TileSelector : MonoBehaviour
                 if (selectedTile < 0) selectedTile = 2;
                 UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
             }
-            if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection]) //Checks if it connects
+            if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && selectedTile < selectableTiles.Count) //Checks if it connects
             {
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+                selectableTiles.Remove(UITiles[selectedTile].tileFromList); //Remove the placed tile from the pool
                 StopSelection();
                 //HideMenu();
                 GenerateTiles();
-                //Remove the placed tile from the pool
             }
             if (keyboard.rKey.wasPressedThisFrame)
             {
@@ -90,22 +90,66 @@ public class TileSelector : MonoBehaviour
         }
     }
 
+    public int GetTilesLeft()
+    {
+        return selectableTiles.Count;
+    }
+
     public void GenerateTiles()
     {
-        foreach (UITiles obj in UITiles)
+        int previousIndex = -1;
+        if (selectableTiles.Count < 3)
         {
-            obj.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
-            obj.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
-            int randomIndex = Random.Range(0, selectableTiles.Count);
-            SelectableTiles randomTile = selectableTiles[randomIndex];
-            obj.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = randomTile.tileSprite;
-            obj.tileType = randomTile.tileType;
-            obj.camera = randomTile.camera;
-            obj.directions = randomTile.directions;
-            obj.gearAmount = randomTile.gearAmount;
-            SetUITileGears(obj);
-            if (randomTile.camera) obj.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-            else obj.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+            List<SelectableTiles> remainingTiles = new List<SelectableTiles>();
+            foreach (SelectableTiles tile in selectableTiles)
+            {
+                remainingTiles.Add(tile);
+            }
+
+            foreach (UITiles t in UITiles)
+            {
+                t.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
+                t.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
+                t.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = null; //Reset sprite
+                SetUITileGears(t);
+            }
+
+            for (int i = 0; i < remainingTiles.Count; i++)
+            {
+                UITiles[i].tileObject.transform.GetChild(0).GetComponent<Image>().sprite = remainingTiles[i].tileSprite;
+                UITiles[i].tileType = remainingTiles[i].tileType;
+                UITiles[i].camera = remainingTiles[i].camera;
+                UITiles[i].directions = remainingTiles[i].directions;
+                UITiles[i].gearAmount = remainingTiles[i].gearAmount;
+                UITiles[i].tileFromList = remainingTiles[i];
+                SetUITileGears(UITiles[i]);
+                if (remainingTiles[i].camera) UITiles[i].tileObject.transform.GetChild(2).gameObject.SetActive(true);
+                else UITiles[i].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            foreach (UITiles obj in UITiles)
+            {
+                obj.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
+                obj.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
+                int randomIndex = Random.Range(0, selectableTiles.Count);
+                while (randomIndex == previousIndex)
+                {
+                    randomIndex = Random.Range(0, selectableTiles.Count);
+                }
+                SelectableTiles randomTile = selectableTiles[randomIndex];
+                previousIndex = randomIndex;
+                obj.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = randomTile.tileSprite;
+                obj.tileType = randomTile.tileType;
+                obj.camera = randomTile.camera;
+                obj.directions = randomTile.directions;
+                obj.gearAmount = randomTile.gearAmount;
+                obj.tileFromList = randomTile;
+                SetUITileGears(obj);
+                if (randomTile.camera) obj.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+                else obj.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+            }
         }
     }
 
@@ -196,4 +240,5 @@ public class UITiles // The three tiles that appear on the screen
     public bool camera;
     public bool[] directions;
     public int gearAmount;
+    public SelectableTiles tileFromList;
 }
