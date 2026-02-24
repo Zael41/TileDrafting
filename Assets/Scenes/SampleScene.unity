@@ -2515,18 +2515,20 @@ MonoBehaviour:
   player: {fileID: 127755451}
   guard: {fileID: 5508083439399292406, guid: 0c71e7a7edba1c1489ca73fa78e6453f, type: 3}
   lockedVault: {fileID: -5318236274941143710, guid: 253a200b77d3a6948950f9c49020a586, type: 3}
-  openVault: {fileID: -1974042178797025698, guid: 9263eea8d3ff9a449975b46d2442917a, type: 3}
+  openVault: {fileID: 6377618058977086936, guid: 5d1c9fc02279a204a8b00127a7db9232, type: 3}
   startTile: {fileID: 339172498047753876, guid: 562abdefe0a83874eb99a514dc4c7833, type: 3}
   oneGearSprite: {fileID: -5385955565826970688, guid: dd533bb4c442ee04abcc3358faf3fee6, type: 3}
   twoGearSprite: {fileID: 21300000, guid: 71bf1f8e0618a9343beaa16d21576ffd, type: 3}
   gridSize: 9
   playerPos: {x: 4, y: 4}
   health: 0
-  vaultNumber: 2
+  vaultNumber: 1
   nextAlertCounter: 4
-  gearAmount: 0
-  rerolls: 0
-  holds: 0
+  availableDirections:
+  - {x: 0, y: 1}
+  - {x: 1, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: 0}
   tileSelector: {fileID: 1646741361}
   alertText: {fileID: 1360357408}
   healthText: {fileID: 1218256863}
