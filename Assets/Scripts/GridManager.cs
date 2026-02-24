@@ -184,7 +184,6 @@ public class GridManager : MonoBehaviour
 
     private void NewMovement(KeyControl key, int directionsIndex, Vector2Int directionVector, int oppositeDirectionIndex)
     {
-        // Draft tiles before even moving
         if (generatingTiles) return;
         if (key.wasReleasedThisFrame && tiles[playerPos.x, playerPos.y].directions[directionsIndex])
         {
@@ -200,7 +199,7 @@ public class GridManager : MonoBehaviour
                 tileSelector.StartSelection(oppositeDirectionIndex);
                 generatingTiles = true;
             }
-            else //Need to check if both directions are valid to let you move
+            else if (nextTile.directions[oppositeDirectionIndex]) //Check if both directions are valid to let you move
             {
                 Vector2Int previousPos = playerPos;
                 player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
