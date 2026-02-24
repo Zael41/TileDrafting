@@ -166,9 +166,10 @@ public class GridManager : MonoBehaviour
             }
             UpdateUI();
         }
-        if (keyboard.qKey.wasPressedThisFrame && rerolls > 0 && !generatingTiles)
+        if (keyboard.qKey.wasPressedThisFrame && rerolls > 0) // Reroll function
         {
             tileSelector.GenerateTiles();
+            tileSelector.StartSelection(tileSelector.requiredDirection);
             rerolls--;
             UpdateUI();
         }
@@ -346,6 +347,7 @@ public class GridManager : MonoBehaviour
     {
         health--;
         UpdateUI();
+        if (health < 0) Debug.Log("You Lose");
     }
 }
 
