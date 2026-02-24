@@ -194,7 +194,7 @@ public class GridManager : MonoBehaviour
             {
                 return;
             }
-            if (!nextTile.generated)
+            if (!nextTile.generated && tileSelector.GetTilesLeft() > 0)
             {
                 tileSelector.StartSelection(oppositeDirectionIndex);
                 generatingTiles = true;
