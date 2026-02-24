@@ -23,11 +23,14 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int health;
     [SerializeField] private int vaultNumber;
     [SerializeField] private int nextAlertCounter;
-    [SerializeField] private int gearAmount;
-    [SerializeField] private int rerolls;
-    [SerializeField] private int holds;
+    [SerializeField] private List<Vector2Int> availableDirections;
+    private int gearAmount;
+    private int rerolls;
+    private int holds;
     private int toNextAlertLevel;
     private int alertLevel;
+    private bool openVaultWhenSpawned;
+    private Tile vaultTile;
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
@@ -122,6 +125,17 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     break;
+                case TileTypes.Key_Room:
+                    if (gearAmount < 2) break;
+                    if (vaultTile != null)
+                    {
+                        vaultTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = openVault;
+                        vaultTile.vaultOpen = true;
+                    }
+                    else openVaultWhenSpawned = true;
+                    tiles[playerPos.x, playerPos.y].remainingUses--;
+                    gearAmount -= 2;
+                    break;
                 case TileTypes.Surveillance:
                     if (gearAmount < 1) break;
                     toNextAlertLevel = 0;
@@ -183,26 +197,19 @@ public class GridManager : MonoBehaviour
             }
             if (!nextTile.generated)
             {
-                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen)
-                {
-                    nextTile.generated = true;
-                    nextTile.directions = new bool[4] { false, false, false, false };
-                    nextTile.directions[oppositeDirectionIndex] = true;
-                    player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
-                    playerPos += directionVector;
-                    vaultNumber--;
-                }
-                else
-                {
-                    tileSelector.StartSelection(oppositeDirectionIndex);
-                    generatingTiles = true;
-                }
+                tileSelector.StartSelection(oppositeDirectionIndex);
+                generatingTiles = true;
             }
             else //Need to check if both directions are valid to let you move
             {
                 Vector2Int previousPos = playerPos;
                 player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
                 playerPos += directionVector;
+                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen && nextTile.remainingUses > 0)
+                {
+                    vaultNumber--;
+                    RaiseAlertVault();
+                }
                 if (guards.Count > 0)
                 {
                     List<Guard> guardsThatCollided = new List<Guard>();
@@ -246,8 +253,23 @@ public class GridManager : MonoBehaviour
         {
             vault1Pos = GetRandomVaultPos();
         }
-        tiles[vault1Pos.x, vault1Pos.y].tileType = TileTypes.Vault;
-        tiles[vault1Pos.x, vault1Pos.y].tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = lockedVault;
+        int randomDirection = Random.Range(0, 4);
+        Vector2Int vaultNeighbor = new Vector2Int(vault1Pos.x + availableDirections[randomDirection].x, vault1Pos.y + availableDirections[randomDirection].y);
+        while (!CheckBounds(vaultNeighbor))
+        {
+            randomDirection = Random.Range(0, 4);
+            vaultNeighbor = new Vector2Int(vault1Pos.x + availableDirections[randomDirection].x, vault1Pos.y + availableDirections[randomDirection].y);
+        }
+        vaultTile = tiles[vault1Pos.x, vault1Pos.y];
+        vaultTile.tileType = TileTypes.Vault;
+        vaultTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = openVaultWhenSpawned ? openVault : lockedVault;
+        vaultTile.vaultOpen = openVaultWhenSpawned;
+        vaultTile.directions[randomDirection] = true;
+        for (int i = 0; i < randomDirection; i++)
+        {
+            vaultTile.tileObject.transform.GetChild(0).Rotate(0, 0, -90);
+        }
+        vaultTile.generated = true;
     }
 
     public bool CheckBounds(Vector2Int nextTilePos)
@@ -295,18 +317,29 @@ public class GridManager : MonoBehaviour
         {
             alertLevel++;
             toNextAlertLevel = 0;
-            Vector2Int randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
-            while (!tiles[randomGuardPos.x, randomGuardPos.y].generated)
-            {
-                randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
-            }
-            GameObject g = Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
-            guards.Add(g.GetComponent<Guard>());
-
+            SpawnGuard();
         }
         UpdateUI();
         nextTile.cameraEnabled = false;
         nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
+    }
+
+    private void SpawnGuard()
+    {
+        Vector2Int randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+        while (!tiles[randomGuardPos.x, randomGuardPos.y].generated)
+        {
+            randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+        }
+        GameObject g = Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
+        guards.Add(g.GetComponent<Guard>());
+    }
+
+    private void RaiseAlertVault()
+    {
+        alertLevel++;
+        SpawnGuard();
+        UpdateUI();
     }
 
     public void TakeDamage()
