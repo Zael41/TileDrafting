@@ -10,7 +10,8 @@ public class TileSelector : MonoBehaviour
     [SerializeField] private TMP_Text title;
     [SerializeField] private Sprite oneGearSprite;
     [SerializeField] private Sprite twoGearSprite;
-    [SerializeField] private List<UITiles> UITiles; //Change this for another custom class called "UITiles" that also stores their info
+    [SerializeField] private Sprite emptyTile;
+    [SerializeField] private List<UITiles> UITiles;
     [SerializeField] private List<AvailableTiles> availableTiles;
     [SerializeField] private List<SelectableTiles> selectableTiles;
     private int selectedTile;
@@ -51,9 +52,10 @@ public class TileSelector : MonoBehaviour
                 if (selectedTile < 0) selectedTile = 2;
                 UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
             }
-            if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && selectedTile < selectableTiles.Count) //Checks if it connects
+            if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && !UITiles[selectedTile].empty) //Checks if it connects
             {
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+                UITiles[selectedTile].locked = false;
                 selectableTiles.Remove(UITiles[selectedTile].tileFromList); //Remove the placed tile from the pool
                 StopSelection();
                 //HideMenu();
@@ -97,7 +99,7 @@ public class TileSelector : MonoBehaviour
 
     public void GenerateTiles()
     {
-        int previousIndex = -1;
+        List<SelectableTiles> usedTiles = new List<SelectableTiles>();
         if (selectableTiles.Count < 3)
         {
             List<SelectableTiles> remainingTiles = new List<SelectableTiles>();
@@ -108,14 +110,25 @@ public class TileSelector : MonoBehaviour
 
             foreach (UITiles t in UITiles)
             {
-                t.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
                 t.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
-                t.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = null; //Reset sprite
-                SetUITileGears(t);
+                if (t.locked) //Don't touch locked tiles
+                {
+                    usedTiles.Add(t.tileFromList);
+                    continue;
+                }
+                t.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
+                t.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = emptyTile; //Reset sprite
+                t.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                t.tileObject.transform.GetChild(3).gameObject.SetActive(false);
+                t.empty = true;
             }
 
             for (int i = 0; i < remainingTiles.Count; i++)
             {
+                if (UITiles[i].locked || usedTiles.Contains(remainingTiles[i])) //Don't touch locked tiles
+                {
+                    continue;
+                }
                 UITiles[i].tileObject.transform.GetChild(0).GetComponent<Image>().sprite = remainingTiles[i].tileSprite;
                 UITiles[i].tileType = remainingTiles[i].tileType;
                 UITiles[i].camera = remainingTiles[i].camera;
@@ -123,23 +136,36 @@ public class TileSelector : MonoBehaviour
                 UITiles[i].gearAmount = remainingTiles[i].gearAmount;
                 UITiles[i].tileFromList = remainingTiles[i];
                 SetUITileGears(UITiles[i]);
+                UITiles[i].empty = false;
                 if (remainingTiles[i].camera) UITiles[i].tileObject.transform.GetChild(2).gameObject.SetActive(true);
                 else UITiles[i].tileObject.transform.GetChild(2).gameObject.SetActive(false);
             }
         }
         else
         {
+            foreach (UITiles t in UITiles)
+            {
+                t.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
+                if (t.locked) //Don't touch locked tiles
+                {
+                    usedTiles.Add(t.tileFromList);
+                    continue;
+                }
+                t.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
+            }
             foreach (UITiles obj in UITiles)
             {
-                obj.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
-                obj.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
+                if (obj.locked) //Don't touch locked tiles
+                {
+                    continue;
+                }
                 int randomIndex = Random.Range(0, selectableTiles.Count);
-                while (randomIndex == previousIndex)
+                while (usedTiles.Contains(selectableTiles[randomIndex]))
                 {
                     randomIndex = Random.Range(0, selectableTiles.Count);
                 }
                 SelectableTiles randomTile = selectableTiles[randomIndex];
-                previousIndex = randomIndex;
+                usedTiles.Add(randomTile);
                 obj.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = randomTile.tileSprite;
                 obj.tileType = randomTile.tileType;
                 obj.camera = randomTile.camera;
@@ -188,6 +214,11 @@ public class TileSelector : MonoBehaviour
         selectedTile = -1;
         gridManager.generatingTiles = false;
         title.text = "Next Choices";
+    }
+
+    public void LockSelected()
+    {
+        UITiles[selectedTile].locked = true;
     }
 }
 
@@ -241,4 +272,6 @@ public class UITiles // The three tiles that appear on the screen
     public bool[] directions;
     public int gearAmount;
     public SelectableTiles tileFromList;
+    public bool locked;
+    public bool empty;
 }

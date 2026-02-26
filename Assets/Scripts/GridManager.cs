@@ -122,7 +122,7 @@ public class GridManager : MonoBehaviour
             {
                 case TileTypes.Control_Room:
                     if (gearAmount < 2) break;
-                    SpawnVault(); // Needs to account for directions
+                    SpawnVault();
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     break;
@@ -169,9 +169,20 @@ public class GridManager : MonoBehaviour
         if (keyboard.qKey.wasPressedThisFrame && rerolls > 0) // Reroll function
         {
             tileSelector.GenerateTiles();
-            tileSelector.StartSelection(tileSelector.requiredDirection);
+            tileSelector.StartSelection(tileSelector.requiredDirection); //Don't do this unless you're already drafting
             rerolls--;
             UpdateUI();
+        }
+        if (keyboard.hKey.wasPressedThisFrame && generatingTiles && holds > 1) // Hold function
+        {
+            tileSelector.LockSelected();
+            Debug.Log("locked");
+        }
+        if (keyboard.zKey.wasPressedThisFrame) //Cheats, remove after
+        {
+            rerolls++;
+            holds++;
+            gearAmount += 2;
         }
     }
 
@@ -325,7 +336,7 @@ public class GridManager : MonoBehaviour
         nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
     }
 
-    private void SpawnGuard()
+    private void SpawnGuard() //Need to change this so they spawn at least 2 tiles away from the player
     {
         Vector2Int randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
         while (!tiles[randomGuardPos.x, randomGuardPos.y].generated)
