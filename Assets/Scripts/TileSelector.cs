@@ -100,59 +100,49 @@ public class TileSelector : MonoBehaviour
     public void GenerateTiles()
     {
         List<SelectableTiles> usedTiles = new List<SelectableTiles>();
-        if (selectableTiles.Count < 3)
+        List<UITiles> lockedUITiles = LockedTiles();
+
+        foreach (UITiles t in UITiles) //Reset UI tiles
+        {
+            t.tileObject.transform.GetChild(1).gameObject.SetActive(false);
+            if (t.locked) //Don't touch locked tiles
+            {
+                usedTiles.Add(t.tileFromList);
+                continue;
+            }
+            t.tileObject.transform.GetChild(0).rotation = Quaternion.identity;
+            t.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = emptyTile;
+            t.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+            t.tileObject.transform.GetChild(3).gameObject.SetActive(false);
+            t.empty = true;
+        }
+        if (selectableTiles.Count == lockedUITiles.Count) //Cases: 1 tile left and locked, 2 tiles left and both locked
+        {
+            return;
+        }
+        else if (selectableTiles.Count < 3) //Cases: 1 tile left not locked, 2 tiles left 1 locked, 2 tiles left none locked
         {
             List<SelectableTiles> remainingTiles = new List<SelectableTiles>();
             foreach (SelectableTiles tile in selectableTiles)
             {
                 remainingTiles.Add(tile);
             }
+            if (lockedUITiles.Count > 0) remainingTiles.Remove(lockedUITiles[0].tileFromList);
 
-            foreach (UITiles t in UITiles)
-            {
-                t.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
-                if (t.locked) //Don't touch locked tiles
-                {
-                    usedTiles.Add(t.tileFromList);
-                    continue;
-                }
-                t.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
-                t.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = emptyTile; //Reset sprite
-                t.tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                t.tileObject.transform.GetChild(3).gameObject.SetActive(false);
-                t.empty = true;
-            }
+            int remainingTilesCounter = 0;
 
-            for (int i = 0; i < remainingTiles.Count; i++)
+            for (int i = 0; i < UITiles.Count; i++)
             {
-                if (UITiles[i].locked || usedTiles.Contains(remainingTiles[i])) //Don't touch locked tiles
+                if (UITiles[i].locked || remainingTilesCounter >= remainingTiles.Count) //Don't touch locked tiles
                 {
                     continue;
                 }
-                UITiles[i].tileObject.transform.GetChild(0).GetComponent<Image>().sprite = remainingTiles[i].tileSprite;
-                UITiles[i].tileType = remainingTiles[i].tileType;
-                UITiles[i].camera = remainingTiles[i].camera;
-                UITiles[i].directions = remainingTiles[i].directions;
-                UITiles[i].gearAmount = remainingTiles[i].gearAmount;
-                UITiles[i].tileFromList = remainingTiles[i];
-                SetUITileGears(UITiles[i]);
-                UITiles[i].empty = false;
-                if (remainingTiles[i].camera) UITiles[i].tileObject.transform.GetChild(2).gameObject.SetActive(true);
-                else UITiles[i].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                SetUITileValues(UITiles[i], remainingTiles[remainingTilesCounter]);
+                remainingTilesCounter++;
             }
         }
-        else
+        else //Cases: Always 3 tiles, all 3 can be locked or not
         {
-            foreach (UITiles t in UITiles)
-            {
-                t.tileObject.transform.GetChild(1).gameObject.SetActive(false); //Reset selection
-                if (t.locked) //Don't touch locked tiles
-                {
-                    usedTiles.Add(t.tileFromList);
-                    continue;
-                }
-                t.tileObject.transform.GetChild(0).rotation = Quaternion.identity; //Reset rotation
-            }
             foreach (UITiles obj in UITiles)
             {
                 if (obj.locked) //Don't touch locked tiles
@@ -166,17 +156,33 @@ public class TileSelector : MonoBehaviour
                 }
                 SelectableTiles randomTile = selectableTiles[randomIndex];
                 usedTiles.Add(randomTile);
-                obj.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = randomTile.tileSprite;
-                obj.tileType = randomTile.tileType;
-                obj.camera = randomTile.camera;
-                obj.directions = randomTile.directions;
-                obj.gearAmount = randomTile.gearAmount;
-                obj.tileFromList = randomTile;
-                SetUITileGears(obj);
-                if (randomTile.camera) obj.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-                else obj.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                SetUITileValues(obj, randomTile);
             }
         }
+    }
+
+    private List<UITiles> LockedTiles()
+    {
+        List<UITiles> lockedTiles = new List<UITiles>();
+        foreach (UITiles t in UITiles)
+        {
+            if (t.locked) lockedTiles.Add(t);
+        }
+        return lockedTiles;
+    }
+
+    private void SetUITileValues(UITiles uiTile, SelectableTiles tile)
+    {
+        uiTile.tileObject.transform.GetChild(0).GetComponent<Image>().sprite = tile.tileSprite;
+        uiTile.tileType = tile.tileType;
+        uiTile.camera = tile.camera;
+        uiTile.directions = tile.directions;
+        uiTile.gearAmount = tile.gearAmount;
+        uiTile.tileFromList = tile;
+        SetUITileGears(uiTile);
+        uiTile.empty = false;
+        if (tile.camera) uiTile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+        else uiTile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
     }
 
     public void SetUITileGears(UITiles tile)
