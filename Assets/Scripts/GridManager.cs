@@ -206,11 +206,6 @@ public class GridManager : MonoBehaviour
                 Vector2Int previousPos = playerPos;
                 player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
                 playerPos += directionVector;
-                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen && nextTile.remainingUses > 0)
-                {
-                    vaultNumber--;
-                    RaiseAlertVault();
-                }
                 if (guards.Count > 0)
                 {
                     List<Guard> guardsThatCollided = new List<Guard>();
@@ -227,6 +222,11 @@ public class GridManager : MonoBehaviour
                             Destroy(g.gameObject);
                         }
                     }
+                }
+                if (nextTile.tileType == TileTypes.Vault && nextTile.vaultOpen && nextTile.remainingUses > 0)
+                {
+                    vaultNumber--;
+                    RaiseAlertVault();
                 }
                 if (nextTile.camera && nextTile.cameraEnabled)
                 {

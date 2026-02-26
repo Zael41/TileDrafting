@@ -10,15 +10,20 @@ public class Guard : MonoBehaviour
     private int randomIndex;
     private Tile nextTile;
     private Vector2Int nextTilePos;
+    private int nextDirection;
 
     //Pathfinding
     List<Tile> searchedTiles;
     List<Tile> tilesToSearch;
     List<Tile> finalPath;
 
-    public bool Movement(Vector2Int prevPlayerPos)
+    private void Start()
     {
-        bool collided = false;
+        MovementPrediction();
+    }
+
+    public void MovementPrediction()
+    {
         currentPos = new Vector2Int((int)(transform.position.x), (int)(transform.position.y));
         int manhattanDist = ManhattanDistance(currentPos, GridManager.instance.playerPos);
         //manhattanDist = 9;
@@ -31,19 +36,12 @@ public class Guard : MonoBehaviour
                 CalculateMovement();
                 lastDirectionCounter++;
             }
-            if (currentPos == GridManager.instance.playerPos && prevPlayerPos == nextTilePos) //Passing damage
+            nextDirection = randomIndex;
+            gameObject.transform.rotation = Quaternion.identity;
+            for (int i = 0; i < randomIndex; i++)
             {
-                GridManager.instance.TakeDamage();
-                collided = true;
+                gameObject.transform.Rotate(0, 0, -90);
             }
-            if (nextTilePos == GridManager.instance.playerPos) //Direct hit damage
-            {
-                GridManager.instance.TakeDamage();
-                collided = true;
-            }
-            transform.position = new Vector3(nextTilePos.x, nextTilePos.y, 0f);
-            currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
-            lastDirection = randomIndex;
         }
         else //A star pathfinding to get closer
         {
@@ -82,16 +80,44 @@ public class Guard : MonoBehaviour
                         playerTile = playerTile.path;
                     }
                     nextTilePos = finalPath[finalPath.Count - 1].position;
-                    transform.position = new Vector3(nextTilePos.x, nextTilePos.y, 0f);
-                    currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
-
-                    return false;
+                    gameObject.transform.rotation = Quaternion.identity;
+                    Vector2Int direction = nextTilePos - currentPos;
+                    int directionIndex = availableDirections.IndexOf(direction);
+                    lastDirection = directionIndex;
+                    for (int i = 0; i < directionIndex; i++)
+                    {
+                        gameObject.transform.Rotate(0, 0, -90);
+                    }
+                    return;
                 }
 
                 SearchNeighbors(tileToSearch, playerTile);
 
             }
         }
+        return;
+    }
+
+    public bool Movement(Vector2Int prevPlayerPos)
+    {
+        bool collided = false;
+        if (currentPos == GridManager.instance.playerPos && prevPlayerPos == nextTilePos) //Passing damage
+        {
+            GridManager.instance.TakeDamage();
+            collided = true;
+        }
+        if (nextTilePos == GridManager.instance.playerPos) //Direct hit damage
+        {
+            GridManager.instance.TakeDamage();
+            collided = true;
+        }
+
+        transform.position = new Vector3(nextTilePos.x, nextTilePos.y, 0f);
+        currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
+        lastDirection = nextDirection;
+
+        MovementPrediction();
+
         return collided;
     }
 
