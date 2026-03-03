@@ -169,7 +169,7 @@ public class GridManager : MonoBehaviour
         if (keyboard.qKey.wasPressedThisFrame && rerolls > 0) // Reroll function
         {
             tileSelector.GenerateTiles();
-            tileSelector.StartSelection(tileSelector.requiredDirection); //Don't do this unless you're already drafting
+            if (generatingTiles) tileSelector.StartSelection(tileSelector.requiredDirection);
             rerolls--;
             UpdateUI();
         }
