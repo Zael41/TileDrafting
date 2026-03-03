@@ -336,13 +336,34 @@ public class GridManager : MonoBehaviour
         nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
     }
 
-    private void SpawnGuard() //Need to change this so they spawn at least 2 tiles away from the player
+    private void SpawnGuard()
     {
-        Vector2Int randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
-        while (!tiles[randomGuardPos.x, randomGuardPos.y].generated)
+        int maxDistance = -1;
+        foreach (Tile t in tiles)
         {
-            randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+            if (t.generated)
+            {
+                if (ManhattanDistance(playerPos, t.position) > maxDistance) maxDistance = ManhattanDistance(playerPos, t.position);
+            }
         }
+
+        Vector2Int randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+
+        if (maxDistance >= 2)
+        {
+            while (!tiles[randomGuardPos.x, randomGuardPos.y].generated || ManhattanDistance(randomGuardPos, playerPos) < 2) //Spawn at least 2 tiles away if possible
+            {
+                randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+            }
+        }
+        else
+        {
+            while (!tiles[randomGuardPos.x, randomGuardPos.y].generated || randomGuardPos == playerPos)
+            {
+                randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+            }
+        }
+        
         GameObject g = Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
         guards.Add(g.GetComponent<Guard>());
     }
@@ -359,6 +380,11 @@ public class GridManager : MonoBehaviour
         health--;
         UpdateUI();
         if (health < 0) Debug.Log("You Lose");
+    }
+
+    private int ManhattanDistance(Vector2Int a, Vector2Int b)
+    {
+        return (int)(Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y));
     }
 }
 
