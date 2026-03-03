@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.U2D;
 using UnityEngine.UI;
 
 public class TileSelector : MonoBehaviour
@@ -44,6 +45,7 @@ public class TileSelector : MonoBehaviour
                 selectedTile++;
                 if (selectedTile > 2) selectedTile = 0;
                 UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
+                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
             }
             if (keyboard.upArrowKey.wasPressedThisFrame)
             {
@@ -51,6 +53,7 @@ public class TileSelector : MonoBehaviour
                 selectedTile--;
                 if (selectedTile < 0) selectedTile = 2;
                 UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
+                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
             }
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && !UITiles[selectedTile].empty) //Checks if it connects
             {
@@ -73,6 +76,7 @@ public class TileSelector : MonoBehaviour
                     newDirections[i] = UITiles[selectedTile].directions[nextIndex];
                 }
                 UITiles[selectedTile].directions = newDirections;
+                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
             }
         }
     }
@@ -211,6 +215,7 @@ public class TileSelector : MonoBehaviour
         selectedTile = 0;
         UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
         title.text = "Choose One: ";
+        gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
     }
 
     public void StopSelection()

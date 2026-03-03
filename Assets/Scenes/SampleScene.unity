@@ -4082,6 +4082,7 @@ MonoBehaviour:
   oneGearSprite: {fileID: -5385955565826970688, guid: dd533bb4c442ee04abcc3358faf3fee6, type: 3}
   twoGearSprite: {fileID: 21300000, guid: 71bf1f8e0618a9343beaa16d21576ffd, type: 3}
   emptyTile: {fileID: -935177948272434345, guid: 37410a400bb289849a33466538ebd892, type: 3}
+  tileObject: {fileID: 6909526208898626051, guid: d10b2acc78473f54aaf27de25d61df10, type: 3}
   UITiles:
   - tileObject: {fileID: 999789906}
     tileType: 0

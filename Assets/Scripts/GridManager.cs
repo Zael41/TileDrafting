@@ -305,6 +305,12 @@ public class GridManager : MonoBehaviour
         nextTile.gearAmount = gearAmount;
         SetTileGears(nextTile);
         if (camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
+        else nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(false);
+    }
+
+    public Vector2Int GetNextTilePos()
+    {
+        return nextTile.position;
     }
 
     public void SetTileGears(Tile tile)
