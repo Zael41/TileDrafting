@@ -180,6 +180,7 @@ public class GridManager : MonoBehaviour
             rerolls++;
             holds++;
             gearAmount += 2;
+            UpdateUI();
         }
     }
 
