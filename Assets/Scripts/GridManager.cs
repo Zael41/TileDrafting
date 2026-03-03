@@ -39,6 +39,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TMP_Text gearText;
     [SerializeField] private TMP_Text rerollsText;
     [SerializeField] private TMP_Text holdsText;
+    [SerializeField] private List<GameObject> objectives;
 
     [SerializeField] private List<Tile> testtiles;
 
@@ -134,6 +135,7 @@ public class GridManager : MonoBehaviour
                         vaultTile.vaultOpen = true;
                     }
                     else openVaultWhenSpawned = true;
+                    objectives[1].SetActive(true);
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     break;
@@ -238,6 +240,7 @@ public class GridManager : MonoBehaviour
                 {
                     vaultNumber--;
                     RaiseAlertVault();
+                    objectives[2].SetActive(true);
                 }
                 if (nextTile.camera && nextTile.cameraEnabled)
                 {
@@ -252,6 +255,7 @@ public class GridManager : MonoBehaviour
                 }
                 if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
                 {
+                    objectives[3].SetActive(true);
                     Debug.Log("you win");
                 }
             }
@@ -282,6 +286,7 @@ public class GridManager : MonoBehaviour
             vaultTile.tileObject.transform.GetChild(0).Rotate(0, 0, -90);
         }
         vaultTile.generated = true;
+        objectives[0].SetActive(true);
     }
 
     public bool CheckBounds(Vector2Int nextTilePos)
