@@ -56,6 +56,7 @@ public class TileSelector : MonoBehaviour
             {
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
                 UITiles[selectedTile].locked = false;
+                UITiles[selectedTile].tileObject.transform.GetChild(4).gameObject.SetActive(false);
                 selectableTiles.Remove(UITiles[selectedTile].tileFromList); //Remove the placed tile from the pool
                 StopSelection();
                 //HideMenu();
@@ -225,6 +226,7 @@ public class TileSelector : MonoBehaviour
     public void LockSelected()
     {
         UITiles[selectedTile].locked = true;
+        UITiles[selectedTile].tileObject.transform.GetChild(4).gameObject.SetActive(true);
     }
 }
 
