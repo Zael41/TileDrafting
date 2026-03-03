@@ -173,6 +173,8 @@ public class GridManager : MonoBehaviour
         if (keyboard.hKey.wasPressedThisFrame && generatingTiles && holds > 0) // Hold function
         {
             tileSelector.LockSelected();
+            holds--;
+            UpdateUI();
             Debug.Log("locked");
         }
         if (keyboard.zKey.wasPressedThisFrame) //Cheats, remove after
