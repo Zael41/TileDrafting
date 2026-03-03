@@ -170,7 +170,7 @@ public class GridManager : MonoBehaviour
             rerolls--;
             UpdateUI();
         }
-        if (keyboard.hKey.wasPressedThisFrame && generatingTiles && holds > 1) // Hold function
+        if (keyboard.hKey.wasPressedThisFrame && generatingTiles && holds > 0) // Hold function
         {
             tileSelector.LockSelected();
             Debug.Log("locked");
