@@ -32,6 +32,7 @@ public class GridManager : MonoBehaviour
     private int alertLevel;
     private bool openVaultWhenSpawned;
     private Tile vaultTile;
+    private bool gameOver;
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
@@ -41,6 +42,8 @@ public class GridManager : MonoBehaviour
     [SerializeField] private TMP_Text rerollsText;
     [SerializeField] private TMP_Text holdsText;
     [SerializeField] private List<GameObject> objectives;
+    [SerializeField] private GameObject winScreen;
+    [SerializeField] private GameObject loseScreen;
 
     [SerializeField] private List<Tile> testtiles;
 
@@ -97,6 +100,13 @@ public class GridManager : MonoBehaviour
 
     private void Update()
     {
+        if (keyboard.pKey.wasPressedThisFrame) // Restart the game
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        if (gameOver) return;
+
         NewMovement(keyboard.downArrowKey, 2, new Vector2Int(0, -1), 0);
         NewMovement(keyboard.upArrowKey, 0, new Vector2Int(0, 1), 2);
         NewMovement(keyboard.leftArrowKey, 3, new Vector2Int(-1, 0), 1);
@@ -171,10 +181,6 @@ public class GridManager : MonoBehaviour
             holds++;
             gearAmount += 2;
         }
-        if (keyboard.pKey.wasPressedThisFrame) // Restart the game
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
     }
 
     private void UpdateUI()
@@ -245,6 +251,8 @@ public class GridManager : MonoBehaviour
                 if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
                 {
                     objectives[3].SetActive(true);
+                    gameOver = true;
+                    winScreen.SetActive(true);
                     Debug.Log("you win");
                 }
             }
@@ -373,7 +381,12 @@ public class GridManager : MonoBehaviour
     {
         health--;
         UpdateUI();
-        if (health < 0) Debug.Log("You Lose");
+        if (health < 0)
+        {
+            Debug.Log("You Lose");
+            gameOver = true;
+            loseScreen.SetActive(true);
+        }
     }
 
     private int ManhattanDistance(Vector2Int a, Vector2Int b)
