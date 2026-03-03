@@ -11,6 +11,7 @@ public class Guard : MonoBehaviour
     private Tile nextTile;
     private Vector2Int nextTilePos;
     private int nextDirection;
+    private GridManager gridManager;
 
     //Pathfinding
     List<Tile> searchedTiles;
@@ -19,13 +20,14 @@ public class Guard : MonoBehaviour
 
     private void Start()
     {
+        gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         MovementPrediction();
     }
 
     public void MovementPrediction()
     {
         currentPos = new Vector2Int((int)(transform.position.x), (int)(transform.position.y));
-        int manhattanDist = ManhattanDistance(currentPos, GridManager.instance.playerPos);
+        int manhattanDist = ManhattanDistance(currentPos, gridManager.playerPos);
         //manhattanDist = 9;
         if (manhattanDist <= 5) //Pseudo-random movement
         {
@@ -46,15 +48,15 @@ public class Guard : MonoBehaviour
         else //A star pathfinding to get closer
         {
             ResetGridValues();
-            Tile currentTile = GridManager.instance.tiles[currentPos.x, currentPos.y];
-            Tile playerTile = GridManager.instance.tiles[GridManager.instance.playerPos.x, GridManager.instance.playerPos.y];
+            Tile currentTile = gridManager.tiles[currentPos.x, currentPos.y];
+            Tile playerTile = gridManager.tiles[gridManager.playerPos.x, gridManager.playerPos.y];
             searchedTiles = new List<Tile>();
             tilesToSearch = new List<Tile>() { currentTile };
             finalPath = new List<Tile>();
 
             currentTile.gCost = 0;
-            currentTile.hCost = GetDistance(currentPos, GridManager.instance.playerPos);
-            currentTile.fCost = GetDistance(currentPos, GridManager.instance.playerPos);
+            currentTile.hCost = GetDistance(currentPos, gridManager.playerPos);
+            currentTile.fCost = GetDistance(currentPos, gridManager.playerPos);
 
             while (tilesToSearch.Count > 0)
             {
@@ -101,14 +103,14 @@ public class Guard : MonoBehaviour
     public bool Movement(Vector2Int prevPlayerPos)
     {
         bool collided = false;
-        if (currentPos == GridManager.instance.playerPos && prevPlayerPos == nextTilePos) //Passing damage
+        if (currentPos == gridManager.playerPos && prevPlayerPos == nextTilePos) //Passing damage
         {
-            GridManager.instance.TakeDamage();
+            gridManager.TakeDamage();
             collided = true;
         }
-        if (nextTilePos == GridManager.instance.playerPos) //Direct hit damage
+        if (nextTilePos == gridManager.playerPos) //Direct hit damage
         {
-            GridManager.instance.TakeDamage();
+            gridManager.TakeDamage();
             collided = true;
         }
 
@@ -123,7 +125,7 @@ public class Guard : MonoBehaviour
 
     private void ResetGridValues()
     {
-        foreach (Tile t in GridManager.instance.tiles)
+        foreach (Tile t in gridManager.tiles)
         {
             t.gCost = int.MaxValue;
             t.hCost = int.MaxValue;
@@ -143,7 +145,7 @@ public class Guard : MonoBehaviour
 
         foreach (Vector2Int pos in neighborPositions)
         {
-            if (GridManager.instance.CheckBounds(pos))
+            if (gridManager.CheckBounds(pos))
             {
                 validNeighborPositions.Add(pos);
             }
@@ -158,7 +160,7 @@ public class Guard : MonoBehaviour
         for (int i = 0; i < validNeighborPositions.Count; i++)
         {
             if (validNeighborPositions[i].x == -99) continue;
-            Tile neighborTile = GridManager.instance.tiles[validNeighborPositions[i].x, validNeighborPositions[i].y];
+            Tile neighborTile = gridManager.tiles[validNeighborPositions[i].x, validNeighborPositions[i].y];
             if (currentTile.directions[i] && neighborTile.directions[GetOppositeDirection(i)])
             {
                 validNeighbors.Add(neighborTile);
@@ -195,10 +197,10 @@ public class Guard : MonoBehaviour
             {
                 randomIndex = Random.Range(0, availableDirections.Count);
                 nextTilePos = new Vector2Int(currentPos.x + availableDirections[randomIndex].x, currentPos.y + availableDirections[randomIndex].y);
-            } while (!GridManager.instance.CheckBounds(nextTilePos));
+            } while (!gridManager.CheckBounds(nextTilePos));
 
-            nextTile = GridManager.instance.tiles[nextTilePos.x, nextTilePos.y];
-        } while (!nextTile.generated || (!nextTile.directions[GetOppositeDirection(randomIndex)] || !GridManager.instance.tiles[currentPos.x, currentPos.y].directions[randomIndex]));
+            nextTile = gridManager.tiles[nextTilePos.x, nextTilePos.y];
+        } while (!nextTile.generated || (!nextTile.directions[GetOppositeDirection(randomIndex)] || !gridManager.tiles[currentPos.x, currentPos.y].directions[randomIndex]));
     }
 
     private int GetOppositeDirection(int direction)

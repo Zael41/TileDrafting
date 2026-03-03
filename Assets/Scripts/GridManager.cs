@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.SceneManagement;
 using UnityEngine.U2D;
 
 public class GridManager : MonoBehaviour
@@ -48,22 +49,6 @@ public class GridManager : MonoBehaviour
     private Keyboard keyboard;
     private Tile nextTile;
     [HideInInspector] public bool generatingTiles;
-
-    public static GridManager instance;
-
-    private void Awake()
-    {
-        Debug.Log("awake");
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
-    }
 
     private void Start()
     {
@@ -185,6 +170,10 @@ public class GridManager : MonoBehaviour
             rerolls++;
             holds++;
             gearAmount += 2;
+        }
+        if (keyboard.pKey.wasPressedThisFrame) // Restart the game
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
