@@ -2369,11 +2369,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 837235796169864134, guid: 322c19bcb143c054e9fcecc457a991e5, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 318
+      value: 382.6236
       objectReference: {fileID: 0}
     - target: {fileID: 837235796169864134, guid: 322c19bcb143c054e9fcecc457a991e5, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 484
+      value: 507.5
       objectReference: {fileID: 0}
     - target: {fileID: 837235796169864134, guid: 322c19bcb143c054e9fcecc457a991e5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2405,11 +2405,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 837235796169864134, guid: 322c19bcb143c054e9fcecc457a991e5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -729.5
+      value: -728.97034
       objectReference: {fileID: 0}
     - target: {fileID: 837235796169864134, guid: 322c19bcb143c054e9fcecc457a991e5, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -265.5
+      value: -253.75
       objectReference: {fileID: 0}
     - target: {fileID: 837235796169864134, guid: 322c19bcb143c054e9fcecc457a991e5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2425,7 +2425,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3471468420846449670, guid: 322c19bcb143c054e9fcecc457a991e5, type: 3}
       propertyPath: m_Name
-      value: LegendPanel (1)
+      value: LegendPanel
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4082,7 +4082,6 @@ MonoBehaviour:
   oneGearSprite: {fileID: -5385955565826970688, guid: dd533bb4c442ee04abcc3358faf3fee6, type: 3}
   twoGearSprite: {fileID: 21300000, guid: 71bf1f8e0618a9343beaa16d21576ffd, type: 3}
   emptyTile: {fileID: -935177948272434345, guid: 37410a400bb289849a33466538ebd892, type: 3}
-  tileObject: {fileID: 6909526208898626051, guid: d10b2acc78473f54aaf27de25d61df10, type: 3}
   UITiles:
   - tileObject: {fileID: 999789906}
     tileType: 0
@@ -4772,9 +4771,9 @@ RectTransform:
   - {fileID: 1360357407}
   - {fileID: 1530641614}
   - {fileID: 2133342806}
-  - {fileID: 1277228087}
   - {fileID: 1093174308}
   - {fileID: 383455407}
+  - {fileID: 1277228087}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
