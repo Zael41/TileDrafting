@@ -37,6 +37,7 @@ public class GridManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
     [SerializeField] private TMP_Text alertText;
+    [SerializeField] private GameObject[] alertSegments;
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private TMP_Text gearText;
     [SerializeField] private TMP_Text rerollsText;
@@ -188,11 +189,16 @@ public class GridManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        alertText.text = "Alert: " + alertLevel + "\n" + "Counter: " + toNextAlertLevel + "/" + nextAlertCounter;
+        alertText.text = alertLevel.ToString();
         healthText.text = "Health: " + health;
         gearText.text = "Gears: " + gearAmount;
         rerollsText.text = "Rerolls: " + rerolls;
         holdsText.text = "Holds: " + holds;
+        for (int i = 0; i < alertSegments.Length; i++)
+        {
+            if (i <  toNextAlertLevel) alertSegments[i].SetActive(true);
+            else alertSegments[i].SetActive(false);
+        }
     }
 
     private void NewMovement(KeyControl key, int directionsIndex, Vector2Int directionVector, int oppositeDirectionIndex)
