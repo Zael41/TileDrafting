@@ -58,6 +58,7 @@ public class TileSelector : MonoBehaviour
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && !UITiles[selectedTile].empty) //Checks if it connects
             {
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+                gridManager.GetNextTile().tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
                 UITiles[selectedTile].locked = false;
                 UITiles[selectedTile].tileObject.transform.GetChild(4).gameObject.SetActive(false);
                 selectableTiles.Remove(UITiles[selectedTile].tileFromList); //Remove the placed tile from the pool
@@ -216,6 +217,7 @@ public class TileSelector : MonoBehaviour
         UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
         title.text = "Choose One: ";
         gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+        gridManager.GetNextTile().tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
     }
 
     public void StopSelection()

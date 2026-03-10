@@ -350,9 +350,9 @@ public class GridManager : MonoBehaviour
         else nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(false);
     }
 
-    public Vector2Int GetNextTilePos()
+    public Tile GetNextTile()
     {
-        return nextTile.position;
+        return nextTile;
     }
 
     public void SetTileGears(Tile tile)
