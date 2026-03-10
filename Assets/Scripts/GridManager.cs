@@ -226,7 +226,7 @@ public class GridManager : MonoBehaviour
                 /*player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
                 playerPos += directionVector;*/
 
-                StartCoroutine(SmoothMove(player.transform.position, nextTilePosition, 0.5f));
+                StartCoroutine(SmoothMove(player.transform.position, nextTilePosition, 0.25f));
                 playerPos = nextTilePosition;
 
                 if (guards.Count > 0)

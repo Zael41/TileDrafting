@@ -122,11 +122,7 @@ public class Guard : MonoBehaviour
         currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
         lastDirection = nextDirection;*/
 
-        StartCoroutine(SmoothMove(transform.position, nextTilePos, 0.5f));
-        currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
-        lastDirection = nextDirection;
-
-        MovementPrediction();
+        StartCoroutine(SmoothMove(transform.position, nextTilePos, 0.25f));
 
         return collided;
     }
@@ -140,6 +136,10 @@ public class Guard : MonoBehaviour
             transform.position = Vector3.Lerp(startPos, new Vector3(endPos.x, endPos.y, 0f), Mathf.SmoothStep(0f, 1f, time));
             yield return null;
         }
+        currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
+        lastDirection = nextDirection;
+
+        MovementPrediction();
     }
 
     private void ResetGridValues()
