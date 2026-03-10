@@ -13,6 +13,7 @@ public class Guard : MonoBehaviour
     private Vector2Int nextTilePos;
     private int nextDirection;
     private GridManager gridManager;
+    public bool turnDone;
 
     //Pathfinding
     List<Tile> searchedTiles;
@@ -91,6 +92,7 @@ public class Guard : MonoBehaviour
                     {
                         gameObject.transform.Rotate(0, 0, -90);
                     }
+                    turnDone = true;
                     return;
                 }
 
@@ -98,12 +100,14 @@ public class Guard : MonoBehaviour
 
             }
         }
+        turnDone = true;
         return;
     }
 
     public bool Movement(Vector2Int prevPlayerPos)
     {
         bool collided = false;
+        turnDone = false;
         if (currentPos == gridManager.playerPos && prevPlayerPos == nextTilePos) //Passing damage
         {
             gridManager.TakeDamage();

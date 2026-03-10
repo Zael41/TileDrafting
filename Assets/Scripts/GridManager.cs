@@ -35,6 +35,21 @@ public class GridManager : MonoBehaviour
     private Tile vaultTile;
     private bool gameOver;
     private bool currentlyMoving;
+    private bool guardsDone
+    {
+        get
+        {
+            if (guards.Count <= 0) return true;
+            else
+            {
+                foreach (Guard g in guards)
+                {
+                    if (!g.turnDone) return false;
+                }
+                return true;
+            }
+        }
+    }
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
@@ -108,7 +123,7 @@ public class GridManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (gameOver || currentlyMoving) return;
+        if (gameOver || currentlyMoving || !guardsDone) return;
 
         NewMovement(keyboard.downArrowKey, 2, new Vector2Int(0, -1), 0);
         NewMovement(keyboard.upArrowKey, 0, new Vector2Int(0, 1), 2);
