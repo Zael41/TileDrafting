@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,12 +22,12 @@ public class Guard : MonoBehaviour
     private void Start()
     {
         gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
+        currentPos = new Vector2Int((int)(transform.position.x), (int)(transform.position.y));
         MovementPrediction();
     }
 
     public void MovementPrediction()
     {
-        currentPos = new Vector2Int((int)(transform.position.x), (int)(transform.position.y));
         int manhattanDist = ManhattanDistance(currentPos, gridManager.playerPos);
         //manhattanDist = 9;
         if (manhattanDist <= 5) //Pseudo-random movement
@@ -77,7 +78,7 @@ public class Guard : MonoBehaviour
                 {
                     while (playerTile.position != currentPos)
                     {
-                        Debug.Log(playerTile.position);
+                        //Debug.Log(playerTile.position);
                         finalPath.Add(playerTile);
                         playerTile = playerTile.path;
                     }
@@ -113,14 +114,32 @@ public class Guard : MonoBehaviour
             gridManager.TakeDamage();
             collided = true;
         }
+        //Debug.Log(currentPos + " GuardPos");
+        //Debug.Log(gridManager.playerPos + " PlayerPos");
+        //Debug.Log(nextTilePos + " NextGuardPos");
 
-        transform.position = new Vector3(nextTilePos.x, nextTilePos.y, 0f);
+        /*transform.position = new Vector3(nextTilePos.x, nextTilePos.y, 0f);
+        currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
+        lastDirection = nextDirection;*/
+
+        StartCoroutine(SmoothMove(transform.position, nextTilePos, 0.5f));
         currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
         lastDirection = nextDirection;
 
         MovementPrediction();
 
         return collided;
+    }
+
+    private IEnumerator SmoothMove(Vector3 startPos, Vector2Int endPos, float seconds)
+    {
+        float time = 0f;
+        while (time < 1.0)
+        {
+            time += Time.deltaTime / seconds;
+            transform.position = Vector3.Lerp(startPos, new Vector3(endPos.x, endPos.y, 0f), Mathf.SmoothStep(0f, 1f, time));
+            yield return null;
+        }
     }
 
     private void ResetGridValues()

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -33,6 +34,7 @@ public class GridManager : MonoBehaviour
     private bool openVaultWhenSpawned;
     private Tile vaultTile;
     private bool gameOver;
+    private bool currentlyMoving;
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
@@ -106,7 +108,7 @@ public class GridManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (gameOver) return;
+        if (gameOver || currentlyMoving) return;
 
         NewMovement(keyboard.downArrowKey, 2, new Vector2Int(0, -1), 0);
         NewMovement(keyboard.upArrowKey, 0, new Vector2Int(0, 1), 2);
@@ -221,8 +223,12 @@ public class GridManager : MonoBehaviour
             else if (nextTile.directions[oppositeDirectionIndex]) //Check if both directions are valid to let you move
             {
                 Vector2Int previousPos = playerPos;
-                player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
-                playerPos += directionVector;
+                /*player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
+                playerPos += directionVector;*/
+
+                StartCoroutine(SmoothMove(player.transform.position, nextTilePosition, 0.5f));
+                playerPos = nextTilePosition;
+
                 if (guards.Count > 0)
                 {
                     List<Guard> guardsThatCollided = new List<Guard>();
@@ -266,6 +272,19 @@ public class GridManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator SmoothMove(Vector3 startPos, Vector2Int nextTilePos, float seconds)
+    {
+        currentlyMoving = true;
+        float time = 0f;
+        while (time < 1.0)
+        {
+            time += Time.deltaTime / seconds;
+            player.transform.position = Vector3.Lerp(startPos, new Vector3(nextTilePos.x, nextTilePos.y, 0f), Mathf.SmoothStep(0f, 1f, time));
+            yield return null;
+        }
+        currentlyMoving = false;
     }
 
     private void SpawnVault()
