@@ -377,10 +377,12 @@ public class GridManager : MonoBehaviour
             case 1:
                 tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
                 tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = oneGearSprite;
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
                 break;
             case 2:
                 tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
                 tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = twoGearSprite;
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
                 break;
             case -1:
                 tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
