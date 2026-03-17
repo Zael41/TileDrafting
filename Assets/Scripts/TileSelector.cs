@@ -19,6 +19,7 @@ public class TileSelector : MonoBehaviour
     private Keyboard keyboard;
     public int requiredDirection;
     public bool currentlySelecting;
+    private int initialTilesCount;
 
     private void Start()
     {
@@ -30,6 +31,7 @@ public class TileSelector : MonoBehaviour
                 selectableTiles.Add(new SelectableTiles(tile.tileSprite, tile.tileType, tileInfo.camera, tile.directions, tileInfo.gearAmount));
             }
         }
+        initialTilesCount = selectableTiles.Count;
         keyboard = Keyboard.current;
         selectedTile = -1;
         GenerateTiles();
@@ -156,7 +158,10 @@ public class TileSelector : MonoBehaviour
                     continue;
                 }
                 int randomIndex = Random.Range(0, selectableTiles.Count);
-                while (usedTiles.Contains(selectableTiles[randomIndex]))
+                bool showKRCR = initialTilesCount - selectableTiles.Count > 5; //Show control and key rooms after 5 drafts
+                Debug.Log(showKRCR);
+                Debug.Log(selectableTiles[randomIndex].tileType);
+                while (usedTiles.Contains(selectableTiles[randomIndex]) || (!showKRCR && (selectableTiles[randomIndex].tileType == TileTypes.Control_Room || selectableTiles[randomIndex].tileType == TileTypes.Key_Room)))
                 {
                     randomIndex = Random.Range(0, selectableTiles.Count);
                 }
@@ -201,10 +206,12 @@ public class TileSelector : MonoBehaviour
             case 1:
                 tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
                 tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = oneGearSprite;
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(1f, 1f, 1f);
                 break;
             case 2:
                 tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
                 tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = twoGearSprite;
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(1f, 1f, 1f);
                 break;
             case -1:
                 tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
