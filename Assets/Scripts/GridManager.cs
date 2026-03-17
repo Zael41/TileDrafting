@@ -140,6 +140,7 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
                     break;
                 case TileTypes.Key_Room:
                     if (gearAmount < 2) break;
@@ -153,6 +154,7 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
                     break;
                 case TileTypes.Surveillance:
                     if (gearAmount < 1) break;
@@ -160,6 +162,7 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
                     break;
                 case TileTypes.Med_Bay:
                     if (gearAmount < 2) break;
@@ -167,6 +170,7 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
                     break;
                 case TileTypes.Chief_Office:
                     if (gearAmount < 1) break;
@@ -174,6 +178,7 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
                     break;
                 case TileTypes.Archives:
                     if (gearAmount < 1) break;
@@ -181,6 +186,7 @@ public class GridManager : MonoBehaviour
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
                     break;
                 default:
                     break;
@@ -363,19 +369,31 @@ public class GridManager : MonoBehaviour
 
     public void SetTileGears(Tile tile)
     {
-        if (tile.gearAmount == 0)
+        switch (tile.gearAmount)
         {
-            tile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
-        }
-        else if (tile.gearAmount == 1)
-        {
-            tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-            tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = oneGearSprite;
-        }
-        else
-        {
-            tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-            tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = twoGearSprite;
+            case 0:
+                tile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                break;
+            case 1:
+                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = oneGearSprite;
+                break;
+            case 2:
+                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = twoGearSprite;
+                break;
+            case -1:
+                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = oneGearSprite;
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
+                break;
+            case -2:
+                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = twoGearSprite;
+                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
+                break;
+            default:
+                break;
         }
     }
 

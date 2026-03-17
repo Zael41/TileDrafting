@@ -193,19 +193,31 @@ public class TileSelector : MonoBehaviour
 
     public void SetUITileGears(UITiles tile)
     {
-        if (tile.gearAmount == 0)
+        switch (tile.gearAmount)
         {
-            tile.tileObject.transform.GetChild(3).gameObject.SetActive(false);
-        }
-        else if (tile.gearAmount == 1)
-        {
-            tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
-            tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = oneGearSprite;
-        }
-        else
-        {
-            tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
-            tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = twoGearSprite;
+            case 0:
+                tile.tileObject.transform.GetChild(3).gameObject.SetActive(false);
+                break;
+            case 1:
+                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = oneGearSprite;
+                break;
+            case 2:
+                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = twoGearSprite;
+                break;
+            case -1:
+                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = oneGearSprite;
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
+                break;
+            case -2:
+                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = twoGearSprite;
+                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
+                break;
+            default:
+                break;
         }
     }
 
