@@ -139,6 +139,7 @@ public class GridManager : MonoBehaviour
                     SpawnVault();
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     break;
                 case TileTypes.Key_Room:
                     if (gearAmount < 2) break;
@@ -151,30 +152,35 @@ public class GridManager : MonoBehaviour
                     objectives[1].SetActive(true);
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     break;
                 case TileTypes.Surveillance:
                     if (gearAmount < 1) break;
                     toNextAlertLevel = 0;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     break;
                 case TileTypes.Med_Bay:
                     if (gearAmount < 2) break;
                     health++;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     break;
                 case TileTypes.Chief_Office:
                     if (gearAmount < 1) break;
                     rerolls += 2;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     break;
                 case TileTypes.Archives:
                     if (gearAmount < 1) break;
                     holds++;
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount--;
+                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     break;
                 default:
                     break;
