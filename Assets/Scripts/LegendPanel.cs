@@ -18,6 +18,7 @@ public class LegendPanel : MonoBehaviour
             else pages[i].SetActive(false);
         }
         numberText.text = (currentPage + 1).ToString() + "/" + pages.Count;
+        AudioManager.instance.PlaySound("pageTurn", 0.5f);
     }
 
     public void TurnPageLeft()
@@ -30,5 +31,6 @@ public class LegendPanel : MonoBehaviour
             else pages[i].SetActive(false);
         }
         numberText.text = (currentPage + 1).ToString() + "/" + pages.Count;
+        AudioManager.instance.PlaySound("pageTurn", 0.5f);
     }
 }

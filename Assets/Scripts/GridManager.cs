@@ -288,6 +288,7 @@ public class GridManager : MonoBehaviour
                     gearAmount += nextTile.gearAmount;
                     nextTile.gearAmount = 0;
                     nextTile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    AudioManager.instance.PlaySound("gears", 0.5f);
                     UpdateUI();
                 }
                 if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
