@@ -3066,6 +3066,16 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 94e628be04ae62048adfc2823c00eeb2, type: 3}
   - name: gears
     clip: {fileID: 8300000, guid: 39a7ca8a4b3eba346b5a63fea69966ed, type: 3}
+  - name: activateRoom
+    clip: {fileID: 8300000, guid: d9e4e573ca76c24469e70aea1d70bac1, type: 3}
+  - name: alarmUp
+    clip: {fileID: 8300000, guid: 62931c838ed0ed642b6e2ac97678a7a9, type: 3}
+  - name: clearVault
+    clip: {fileID: 8300000, guid: a23aa52fb089da0488d64b3d927f9682, type: 3}
+  - name: lostLife
+    clip: {fileID: 8300000, guid: 62c58f786d99baf4f977d6c67b89429f, type: 3}
+  - name: reroll
+    clip: {fileID: 8300000, guid: d0c17d1d6bd4a3d42b2a6b42fa1a0b86, type: 3}
 --- !u!1 &1444678829
 GameObject:
   m_ObjectHideFlags: 0

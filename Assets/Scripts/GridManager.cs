@@ -141,6 +141,7 @@ public class GridManager : MonoBehaviour
                     gearAmount -= 2;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
                     break;
                 case TileTypes.Key_Room:
                     if (gearAmount < 2) break;
@@ -155,6 +156,7 @@ public class GridManager : MonoBehaviour
                     gearAmount -= 2;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
                     break;
                 case TileTypes.Surveillance:
                     if (gearAmount < 1) break;
@@ -163,6 +165,7 @@ public class GridManager : MonoBehaviour
                     gearAmount--;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
                     break;
                 case TileTypes.Med_Bay:
                     if (gearAmount < 2) break;
@@ -171,6 +174,7 @@ public class GridManager : MonoBehaviour
                     gearAmount -= 2;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
                     break;
                 case TileTypes.Chief_Office:
                     if (gearAmount < 1) break;
@@ -179,6 +183,7 @@ public class GridManager : MonoBehaviour
                     gearAmount--;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
                     break;
                 case TileTypes.Archives:
                     if (gearAmount < 1) break;
@@ -187,6 +192,7 @@ public class GridManager : MonoBehaviour
                     gearAmount--;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
                     break;
                 default:
                     break;
@@ -199,6 +205,7 @@ public class GridManager : MonoBehaviour
             if (generatingTiles) tileSelector.StartSelection(tileSelector.requiredDirection);
             rerolls--;
             UpdateUI();
+            AudioManager.instance.PlaySound("reroll", 0.5f);
         }
         if (keyboard.hKey.wasPressedThisFrame && generatingTiles && holds > 0) // Hold function
         {
@@ -278,6 +285,8 @@ public class GridManager : MonoBehaviour
                     vaultNumber--;
                     RaiseAlertVault();
                     objectives[2].SetActive(true);
+                    nextTile.remainingUses--;
+                    AudioManager.instance.PlaySound("clearVault", 0.5f);
                 }
                 if (nextTile.camera && nextTile.cameraEnabled)
                 {
@@ -408,6 +417,7 @@ public class GridManager : MonoBehaviour
             alertLevel++;
             toNextAlertLevel = 0;
             SpawnGuard();
+            AudioManager.instance.PlaySound("alarmUp", 0.5f);
         }
         UpdateUI();
         nextTile.cameraEnabled = false;
@@ -457,6 +467,7 @@ public class GridManager : MonoBehaviour
     {
         health--;
         UpdateUI();
+        AudioManager.instance.PlaySound("lostLife", 0.5f);
         if (health < 0)
         {
             Debug.Log("You Lose");
