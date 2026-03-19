@@ -341,7 +341,7 @@ MonoBehaviour:
     use a Hold.
 
 
-    - Press "P" to restart and "ESC" to exit.'
+    - Press "P" to restart.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dd74cc4fe3aa38f419b1740e46ba0907, type: 2}
   m_sharedMaterial: {fileID: 8859049457702274349, guid: dd74cc4fe3aa38f419b1740e46ba0907, type: 2}
