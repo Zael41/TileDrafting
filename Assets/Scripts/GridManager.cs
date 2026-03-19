@@ -123,11 +123,6 @@ public class GridManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (keyboard.escapeKey.wasPressedThisFrame) // Quit the game
-        {
-            Application.Quit();
-        }
-
         if (gameOver || currentlyMoving || !guardsDone) return;
 
         NewMovement(keyboard.downArrowKey, 2, new Vector2Int(0, -1), 0);
