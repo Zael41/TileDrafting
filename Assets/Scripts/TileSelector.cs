@@ -20,6 +20,7 @@ public class TileSelector : MonoBehaviour
     public int requiredDirection;
     public bool currentlySelecting;
     private int initialTilesCount;
+    private int extraCRKRrerolls;
 
     private void Start()
     {
@@ -34,6 +35,7 @@ public class TileSelector : MonoBehaviour
         initialTilesCount = selectableTiles.Count;
         keyboard = Keyboard.current;
         selectedTile = -1;
+        extraCRKRrerolls = -5;
         GenerateTiles();
     }
 
@@ -151,6 +153,7 @@ public class TileSelector : MonoBehaviour
         }
         else //Cases: Always 3 tiles, all 3 can be locked or not
         {
+            int currentRerollCounter = extraCRKRrerolls;
             foreach (UITiles obj in UITiles)
             {
                 if (obj.locked) //Don't touch locked tiles
@@ -159,17 +162,46 @@ public class TileSelector : MonoBehaviour
                 }
                 int randomIndex = Random.Range(0, selectableTiles.Count);
                 bool showKRCR = initialTilesCount - selectableTiles.Count > 5; //Show control and key rooms after 5 drafts
-                Debug.Log(showKRCR);
-                Debug.Log(selectableTiles[randomIndex].tileType);
-                while (usedTiles.Contains(selectableTiles[randomIndex]) || (!showKRCR && (selectableTiles[randomIndex].tileType == TileTypes.Control_Room || selectableTiles[randomIndex].tileType == TileTypes.Key_Room)))
+                //Debug.Log(showKRCR);
+                //Debug.Log(selectableTiles[randomIndex].tileType);
+                if (!showKRCR)
                 {
-                    randomIndex = Random.Range(0, selectableTiles.Count);
+                    while (usedTiles.Contains(selectableTiles[randomIndex]) || selectableTiles[randomIndex].tileType == TileTypes.Control_Room || selectableTiles[randomIndex].tileType == TileTypes.Key_Room)
+                    {
+                        randomIndex = Random.Range(0, selectableTiles.Count);
+                    }
+                }
+                else
+                {
+                    do
+                    {
+                        randomIndex = FindTileIndex(randomIndex, usedTiles);
+                        currentRerollCounter--;
+                        Debug.Log(selectableTiles[randomIndex].tileType);
+                    } while (currentRerollCounter > 0 && selectableTiles[randomIndex].tileType != TileTypes.Control_Room && selectableTiles[randomIndex].tileType != TileTypes.Key_Room);
+
+                    if (selectableTiles[randomIndex].tileType == TileTypes.Control_Room || selectableTiles[randomIndex].tileType == TileTypes.Key_Room)
+                    {
+                        extraCRKRrerolls = 0;
+                        currentRerollCounter = 0;
+                    }
                 }
                 SelectableTiles randomTile = selectableTiles[randomIndex];
                 usedTiles.Add(randomTile);
                 SetUITileValues(obj, randomTile);
             }
+            extraCRKRrerolls++;
         }
+    }
+
+    private int FindTileIndex(int initialIndex, List<SelectableTiles> usedTiles)
+    {
+        int randomIndex = initialIndex;
+        do
+        {
+            randomIndex = Random.Range(0, selectableTiles.Count);
+        } while (usedTiles.Contains(selectableTiles[randomIndex]));
+        return randomIndex;
     }
 
     private List<UITiles> LockedTiles()
