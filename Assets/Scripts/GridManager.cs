@@ -152,6 +152,7 @@ public class GridManager : MonoBehaviour
                     }
                     else openVaultWhenSpawned = true;
                     objectives[1].SetActive(true);
+                    AudioManager.instance.PlaySound("markObjective", 0.5f);
                     tiles[playerPos.x, playerPos.y].remainingUses--;
                     gearAmount -= 2;
                     tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
@@ -212,6 +213,7 @@ public class GridManager : MonoBehaviour
             tileSelector.LockSelected();
             holds--;
             UpdateUI();
+            AudioManager.instance.PlaySound("holdTile", 0.5f);
             Debug.Log("locked");
         }
         if (keyboard.zKey.wasPressedThisFrame) //Cheats, remove after
@@ -285,6 +287,7 @@ public class GridManager : MonoBehaviour
                     vaultNumber--;
                     RaiseAlertVault();
                     objectives[2].SetActive(true);
+                    AudioManager.instance.PlaySound("markObjective", 0.5f);
                     nextTile.remainingUses--;
                     AudioManager.instance.PlaySound("clearVault", 0.5f);
                 }
@@ -303,9 +306,11 @@ public class GridManager : MonoBehaviour
                 if (nextTile.tileType == TileTypes.Start && vaultNumber <= 0)
                 {
                     objectives[3].SetActive(true);
+                    AudioManager.instance.PlaySound("markObjective", 0.5f);
                     gameOver = true;
                     winScreen.SetActive(true);
                     Debug.Log("you win");
+                    AudioManager.instance.PlaySound("win", 0.5f);
                 }
             }
         }
@@ -349,6 +354,7 @@ public class GridManager : MonoBehaviour
         }
         vaultTile.generated = true;
         objectives[0].SetActive(true);
+        AudioManager.instance.PlaySound("markObjective", 0.5f);
     }
 
     public bool CheckBounds(Vector2Int nextTilePos)
@@ -358,7 +364,7 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions, TileTypes tileType, int gearAmount)
+    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions, TileTypes tileType, int gearAmount, bool placeSound = false)
     {
         nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = sprite;
         nextTile.tileObject.transform.GetChild(0).rotation = rotation;
@@ -370,6 +376,8 @@ public class GridManager : MonoBehaviour
         SetTileGears(nextTile);
         if (camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
         else nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(false);
+        if (placeSound) AudioManager.instance.PlaySound("placeTile", 0.5f);
+        else AudioManager.instance.PlaySound("selectTile", 0.5f);
     }
 
     public Tile GetNextTile()
@@ -418,6 +426,10 @@ public class GridManager : MonoBehaviour
             toNextAlertLevel = 0;
             SpawnGuard();
             AudioManager.instance.PlaySound("alarmUp", 0.5f);
+        }
+        else
+        {
+            AudioManager.instance.PlaySound("alarmTick", 0.5f);
         }
         UpdateUI();
         nextTile.cameraEnabled = false;

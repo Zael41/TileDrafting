@@ -3076,6 +3076,18 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 62c58f786d99baf4f977d6c67b89429f, type: 3}
   - name: reroll
     clip: {fileID: 8300000, guid: d0c17d1d6bd4a3d42b2a6b42fa1a0b86, type: 3}
+  - name: alarmTick
+    clip: {fileID: 8300000, guid: c296aef28f903ec49ac698790a6e829d, type: 3}
+  - name: holdTile
+    clip: {fileID: 8300000, guid: 81652031b64c342cc8dbc59c138d77c5, type: 3}
+  - name: markObjective
+    clip: {fileID: 8300000, guid: 260b7abaff74533478f6f25c99e937cf, type: 3}
+  - name: placeTile
+    clip: {fileID: 8300000, guid: 0d54653003bc3524ab6b64cac060bd52, type: 3}
+  - name: selectTile
+    clip: {fileID: 8300000, guid: 60ba0d72e381ffd41b522bd69f5ef159, type: 3}
+  - name: win
+    clip: {fileID: 8300000, guid: 2667a0a008b044e218b63df62e2be749, type: 3}
 --- !u!1 &1444678829
 GameObject:
   m_ObjectHideFlags: 0
