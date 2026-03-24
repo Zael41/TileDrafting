@@ -229,7 +229,7 @@ public class GridManager : MonoBehaviour
     {
         alertText.text = alertLevel.ToString();
         healthText.text = "Health: " + health;
-        gearText.text = "Gears: " + gearAmount;
+        gearText.text = "Kits: " + gearAmount;
         rerollsText.text = "Rerolls: " + rerolls;
         holdsText.text = "Holds: " + holds;
         for (int i = 0; i < alertSegments.Length; i++)
@@ -438,33 +438,38 @@ public class GridManager : MonoBehaviour
 
     private void SpawnGuard()
     {
+        List<Tile> generatedTiles = new List<Tile>();
         int maxDistance = -1;
         foreach (Tile t in tiles)
         {
             if (t.generated)
             {
+                generatedTiles.Add(t);
+                Debug.Log(t.position);
                 if (ManhattanDistance(playerPos, t.position) > maxDistance) maxDistance = ManhattanDistance(playerPos, t.position);
             }
         }
-
-        Vector2Int randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+        Debug.Log(maxDistance);
+        Tile randomTile = generatedTiles[Random.Range(0, generatedTiles.Count)];
 
         if (maxDistance >= 2)
         {
-            while (!tiles[randomGuardPos.x, randomGuardPos.y].generated || ManhattanDistance(randomGuardPos, playerPos) < 2) //Spawn at least 2 tiles away if possible
+            Debug.Log(randomTile.position + " " + ManhattanDistance(randomTile.position, playerPos));
+            while (ManhattanDistance(randomTile.position, playerPos) < 2) //Spawn at least 2 tiles away if possible
             {
-                randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+                randomTile = generatedTiles[Random.Range(0, generatedTiles.Count)];
+                Debug.Log(randomTile.position + " " +  ManhattanDistance(randomTile.position, playerPos));
             }
         }
         else
         {
-            while (!tiles[randomGuardPos.x, randomGuardPos.y].generated || randomGuardPos == playerPos)
+            while (randomTile.position == playerPos)
             {
-                randomGuardPos = new Vector2Int(Random.Range(0, 8), Random.Range(0, 8));
+                randomTile = generatedTiles[Random.Range(0, generatedTiles.Count)];
             }
         }
         
-        GameObject g = Instantiate(guard, new Vector3(randomGuardPos.x, randomGuardPos.y, 0f), Quaternion.identity);
+        GameObject g = Instantiate(guard, new Vector3(randomTile.position.x, randomTile.position.y, 0f), Quaternion.identity);
         guards.Add(g.GetComponent<Guard>());
     }
 
