@@ -218,13 +218,13 @@ public class GridManager : MonoBehaviour
             AudioManager.instance.PlaySound("holdTile", 0.5f);
             Debug.Log("locked");
         }
-        if (keyboard.zKey.wasPressedThisFrame) //Cheats, remove after
+        /*if (keyboard.zKey.wasPressedThisFrame) //Cheats, remove after
         {
             rerolls++;
             holds++;
             gearAmount += 2;
             UpdateUI();
-        }
+        }*/
 
         if (guardsDone && !prevGuardsDone && guards.Count > 1) //Displace any guards on the same spot
         {
