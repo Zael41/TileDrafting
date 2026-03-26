@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -50,6 +51,7 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+    private bool prevGuardsDone;
 
     [Header("References")]
     [SerializeField] private TileSelector tileSelector;
@@ -223,6 +225,30 @@ public class GridManager : MonoBehaviour
             gearAmount += 2;
             UpdateUI();
         }
+
+        if (guardsDone && !prevGuardsDone && guards.Count > 1) //Displace any guards on the same spot
+        {
+            List<Guard> guardsToMove = new List<Guard>();
+            foreach (Guard g in guards)
+            {
+                foreach (Guard g2 in guards)
+                {
+                    if (g != g2 && g.GetCurrentPos() == g2.GetCurrentPos())
+                    {
+                        guardsToMove.Add(g);
+                        guardsToMove.Add(g2);
+                    }
+                }
+            }
+            guardsToMove = guardsToMove.Distinct().ToList();
+            if (guardsToMove.Count > 1)
+            {
+                guardsToMove[0].transform.position -= new Vector3(0.2f, 0, 0);
+                guardsToMove[1].transform.position += new Vector3(0.2f, 0, 0);
+            }
+            Debug.Log("executedCleanGuards");
+        }
+        prevGuardsDone = guardsDone;
     }
 
     private void UpdateUI()

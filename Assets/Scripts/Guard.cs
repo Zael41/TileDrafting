@@ -157,6 +157,11 @@ public class Guard : MonoBehaviour
         }
     }
 
+    public Vector2Int GetCurrentPos()
+    {
+        return currentPos;
+    }
+
     private void SearchNeighbors(Tile currentTile, Tile endTile)
     {
         Vector2Int tilePos = currentTile.position;
