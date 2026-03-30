@@ -7,20 +7,29 @@ using UnityEngine.UI;
 
 public class TileSelector : MonoBehaviour
 {
-    [SerializeField] private GridManager gridManager;
-    [SerializeField] private TMP_Text title;
+    #region "Variables"
+    [Header("Assets")]
     [SerializeField] private Sprite oneGearSprite;
     [SerializeField] private Sprite twoGearSprite;
     [SerializeField] private Sprite emptyTile;
+
+    [Header("References")]
+    [SerializeField] private GridManager gridManager;
+    [SerializeField] private TMP_Text title;
+
+    [Header("Game Variables")]
     [SerializeField] private List<UITiles> UITiles;
     [SerializeField] private List<AvailableTiles> availableTiles;
-    [SerializeField] private List<SelectableTiles> selectableTiles;
+
+    private List<SelectableTiles> selectableTiles;
     private int selectedTile;
     private Keyboard keyboard;
-    public int requiredDirection;
-    public bool currentlySelecting;
     private int initialTilesCount;
     private int extraCRKRrerolls;
+
+    [HideInInspector] public int requiredDirection;
+    [HideInInspector] public bool currentlySelecting;
+    #endregion
 
     private void Start()
     {

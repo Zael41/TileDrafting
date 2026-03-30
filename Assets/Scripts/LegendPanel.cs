@@ -4,9 +4,13 @@ using UnityEngine;
 
 public class LegendPanel : MonoBehaviour
 {
+    #region "Variables"
+    [Header("References")]
     [SerializeField] private List<GameObject> pages;
     [SerializeField] private TMP_Text numberText;
+
     private int currentPage;
+    #endregion
 
     public void TurnPageRight()
     {

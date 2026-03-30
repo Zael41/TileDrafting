@@ -4,26 +4,27 @@ using UnityEngine;
 
 public class Guard : MonoBehaviour
 {
+    #region "Variables"
     private Vector2Int currentPos;
     private int lastDirection; //Because we check this before it's ever set the guard doesn't like moving up on the first move, not a big deal though
-    private int moveCounter; //Need to implement this
-    [SerializeField] private List<Vector2Int> availableDirections;
+    private List<Vector2Int> availableDirections;
     private int randomIndex;
     private Tile nextTile;
     private Vector2Int nextTilePos;
     private int nextDirection;
     private GridManager gridManager;
-    public bool turnDone;
+    private List<Tile> searchedTiles;
+    private List<Tile> tilesToSearch;
+    private List<Tile> finalPath;
 
-    //Pathfinding
-    List<Tile> searchedTiles;
-    List<Tile> tilesToSearch;
-    List<Tile> finalPath;
+    [HideInInspector] public bool turnDone;
+    #endregion
 
     private void Start()
     {
         gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         currentPos = new Vector2Int((int)(transform.position.x), (int)(transform.position.y));
+        availableDirections = new List<Vector2Int> { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
         MovementPrediction();
     }
 

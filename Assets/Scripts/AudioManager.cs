@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
+    #region "Variables"
+    [Header("Assets")]
     [SerializeField] private AudioClip music;
     [SerializeField] private Sounds[] sounds;
+
     private AudioSource soundsSource;
     private AudioSource musicSource;
 
     public static AudioManager instance;
+    #endregion
 
     private void Awake()
     {

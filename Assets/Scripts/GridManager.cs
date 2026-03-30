@@ -6,27 +6,47 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.SceneManagement;
-using UnityEngine.U2D;
 
 public class GridManager : MonoBehaviour
 {
+    #region "Variables"
+    [Header("Game Variables")]
+    [SerializeField] private int gridSize; // Only odd numbers allowed
+    [SerializeField] private int health;
+    [SerializeField] private int vaultNumber;
+    [SerializeField] private int nextAlertCounter;
+
     [Header("Assets")]
     [SerializeField] private GameObject slotPrefab;
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject guard;
     [SerializeField] private Sprite lockedVault;
     [SerializeField] private Sprite openVault;
-    [SerializeField] private List<StartTile> startTiles;
     [SerializeField] private Sprite oneGearSprite;
     [SerializeField] private Sprite twoGearSprite;
+    [SerializeField] private List<StartTile> startTiles;
 
-    [Header("Game Variables")]
-    [SerializeField] private int gridSize;
-    public Vector2Int playerPos;
-    [SerializeField] private int health;
-    [SerializeField] private int vaultNumber;
-    [SerializeField] private int nextAlertCounter;
-    [SerializeField] private List<Vector2Int> availableDirections;
+    [Header("References")]
+    [SerializeField] private TileSelector tileSelector;
+    [SerializeField] private TMP_Text alertText;
+    [SerializeField] private TMP_Text healthText;
+    [SerializeField] private TMP_Text gearText;
+    [SerializeField] private TMP_Text rerollsText;
+    [SerializeField] private TMP_Text holdsText;
+    [SerializeField] private GameObject winScreen;
+    [SerializeField] private GameObject loseScreen;
+    [SerializeField] private GameObject[] alertSegments;
+    [SerializeField] private List<GameObject> objectives;
+
+    [Header("Testing")]
+    [SerializeField] private List<Tile> testtiles;
+
+    [HideInInspector] public Vector2Int playerPos;
+    [HideInInspector] public Tile[,] tiles;
+    [HideInInspector] public List<Guard> guards;
+    [HideInInspector] public bool generatingTiles;
+
+    private List<Vector2Int> availableDirections;
     private int gearAmount;
     private int rerolls;
     private int holds;
@@ -36,6 +56,9 @@ public class GridManager : MonoBehaviour
     private Tile vaultTile;
     private bool gameOver;
     private bool currentlyMoving;
+    private Keyboard keyboard;
+    private Tile nextTile;
+    private bool prevGuardsDone;
     private bool guardsDone
     {
         get
@@ -51,27 +74,7 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-    private bool prevGuardsDone;
-
-    [Header("References")]
-    [SerializeField] private TileSelector tileSelector;
-    [SerializeField] private TMP_Text alertText;
-    [SerializeField] private GameObject[] alertSegments;
-    [SerializeField] private TMP_Text healthText;
-    [SerializeField] private TMP_Text gearText;
-    [SerializeField] private TMP_Text rerollsText;
-    [SerializeField] private TMP_Text holdsText;
-    [SerializeField] private List<GameObject> objectives;
-    [SerializeField] private GameObject winScreen;
-    [SerializeField] private GameObject loseScreen;
-
-    [SerializeField] private List<Tile> testtiles;
-
-    public Tile[,] tiles;
-    public List<Guard> guards;
-    private Keyboard keyboard;
-    private Tile nextTile;
-    [HideInInspector] public bool generatingTiles;
+    #endregion
 
     private void Start()
     {
@@ -82,7 +85,7 @@ public class GridManager : MonoBehaviour
         {
             for(int j = 0; j < gridSize; j++)
             {
-                if (i == 4 && j == 4) //Change this if grid size changes
+                if (i == (gridSize - 1) / 2 && j == (gridSize - 1) / 2) //Change this if grid size changes
                 {
                     StartTile randomStartTile = startTiles[Random.Range(0, startTiles.Count)];
                     tiles[i, j] = new Tile(new Vector2Int(i, j), Instantiate(slotPrefab, new Vector3(i, j, 0f), Quaternion.identity, this.transform));
@@ -99,6 +102,8 @@ public class GridManager : MonoBehaviour
             }
         }
 
+        availableDirections = new List<Vector2Int> { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
+        playerPos = new Vector2Int((gridSize - 1) / 2, (gridSize - 1) / 2);
         keyboard = Keyboard.current;
     }
 
