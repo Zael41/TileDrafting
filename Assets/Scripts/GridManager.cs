@@ -45,6 +45,7 @@ public class GridManager : MonoBehaviour
     [HideInInspector] public Tile[,] tiles;
     [HideInInspector] public List<Guard> guards;
     [HideInInspector] public bool generatingTiles;
+    [HideInInspector] public Tile nextTile;
 
     private List<Vector2Int> availableDirections;
     private int gearAmount;
@@ -57,7 +58,6 @@ public class GridManager : MonoBehaviour
     private bool gameOver;
     private bool currentlyMoving;
     private Keyboard keyboard;
-    private Tile nextTile;
     private bool prevGuardsDone;
     private bool guardsDone
     {
@@ -114,10 +114,10 @@ public class GridManager : MonoBehaviour
         int upOrDown = Random.Range(0, 2);
         int leftOrRight = Random.Range(0, 2);
 
-        if (upOrDown <= 0) vaultPos.x = Random.Range(6, 8);
+        if (upOrDown <= 0) vaultPos.x = Random.Range(gridSize - 3, gridSize);
         else vaultPos.x = Random.Range(0, 2);
 
-        if (leftOrRight <= 0) vaultPos.y = Random.Range(6, 8);
+        if (leftOrRight <= 0) vaultPos.y = Random.Range(gridSize - 3, gridSize);
         else vaultPos.y = Random.Range(0, 2);
 
         return vaultPos;
@@ -132,10 +132,10 @@ public class GridManager : MonoBehaviour
 
         if (gameOver || currentlyMoving || !guardsDone) return;
 
-        NewMovement(keyboard.downArrowKey, 2, new Vector2Int(0, -1), 0);
-        NewMovement(keyboard.upArrowKey, 0, new Vector2Int(0, 1), 2);
-        NewMovement(keyboard.leftArrowKey, 3, new Vector2Int(-1, 0), 1);
-        NewMovement(keyboard.rightArrowKey, 1, new Vector2Int(1, 0), 3);
+        NewMovement(keyboard.downArrowKey, 2);
+        NewMovement(keyboard.upArrowKey, 0);
+        NewMovement(keyboard.leftArrowKey, 3);
+        NewMovement(keyboard.rightArrowKey, 1);
 
         if (keyboard.fKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].tileType != TileTypes.Default && tiles[playerPos.x, playerPos.y].remainingUses > 0 && !generatingTiles)
         {
@@ -144,11 +144,7 @@ public class GridManager : MonoBehaviour
                 case TileTypes.Control_Room:
                     if (gearAmount < 2) break;
                     SpawnVault();
-                    tiles[playerPos.x, playerPos.y].remainingUses--;
-                    gearAmount -= 2;
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
+                    UpdateRoomAfterUse(2); // Need to fix this magic number
                     break;
                 case TileTypes.Key_Room:
                     if (gearAmount < 2) break;
@@ -160,47 +156,27 @@ public class GridManager : MonoBehaviour
                     else openVaultWhenSpawned = true;
                     objectives[1].SetActive(true);
                     AudioManager.instance.PlaySound("markObjective", 0.5f);
-                    tiles[playerPos.x, playerPos.y].remainingUses--;
-                    gearAmount -= 2;
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
+                    UpdateRoomAfterUse(2); // Need to fix this magic number
                     break;
                 case TileTypes.Surveillance:
                     if (gearAmount < 1) break;
                     toNextAlertLevel = 0;
-                    tiles[playerPos.x, playerPos.y].remainingUses--;
-                    gearAmount--;
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
+                    UpdateRoomAfterUse(1); // Need to fix this magic number
                     break;
                 case TileTypes.Med_Bay:
                     if (gearAmount < 2) break;
                     health++;
-                    tiles[playerPos.x, playerPos.y].remainingUses--;
-                    gearAmount -= 2;
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
+                    UpdateRoomAfterUse(2); // Need to fix this magic number
                     break;
                 case TileTypes.Chief_Office:
                     if (gearAmount < 1) break;
                     rerolls += 2;
-                    tiles[playerPos.x, playerPos.y].remainingUses--;
-                    gearAmount--;
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
+                    UpdateRoomAfterUse(1); // Need to fix this magic number
                     break;
                 case TileTypes.Archives:
                     if (gearAmount < 1) break;
                     holds++;
-                    tiles[playerPos.x, playerPos.y].remainingUses--;
-                    gearAmount--;
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                    tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                    AudioManager.instance.PlaySound("activateRoom", 0.5f);
+                    UpdateRoomAfterUse(1); // Need to fix this magic number
                     break;
                 default:
                     break;
@@ -221,7 +197,6 @@ public class GridManager : MonoBehaviour
             holds--;
             UpdateUI();
             AudioManager.instance.PlaySound("holdTile", 0.5f);
-            Debug.Log("locked");
         }
         /*if (keyboard.zKey.wasPressedThisFrame) //Cheats, remove after
         {
@@ -251,9 +226,17 @@ public class GridManager : MonoBehaviour
                 guardsToMove[0].transform.position -= new Vector3(0.2f, 0, 0);
                 guardsToMove[1].transform.position += new Vector3(0.2f, 0, 0);
             }
-            Debug.Log("executedCleanGuards");
         }
         prevGuardsDone = guardsDone;
+    }
+
+    private void UpdateRoomAfterUse(int gearCost)
+    {
+        tiles[playerPos.x, playerPos.y].remainingUses--;
+        gearAmount -= gearCost;
+        tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(3).gameObject.SetActive(true);
+        tiles[playerPos.x, playerPos.y].tileObject.transform.GetChild(2).gameObject.SetActive(false);
+        AudioManager.instance.PlaySound("activateRoom", 0.5f);
     }
 
     private void UpdateUI()
@@ -270,12 +253,12 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    private void NewMovement(KeyControl key, int directionsIndex, Vector2Int directionVector, int oppositeDirectionIndex)
+    private void NewMovement(KeyControl key, int directionsIndex)
     {
         if (generatingTiles) return;
         if (key.wasReleasedThisFrame && tiles[playerPos.x, playerPos.y].directions[directionsIndex])
         {
-            Vector2Int nextTilePosition = playerPos + directionVector;
+            Vector2Int nextTilePosition = playerPos + availableDirections[directionsIndex];
             if (!CheckBounds(nextTilePosition)) return;
             nextTile = tiles[nextTilePosition.x, nextTilePosition.y];
             if (nextTile.tileType == TileTypes.Vault && !nextTile.vaultOpen)
@@ -284,15 +267,12 @@ public class GridManager : MonoBehaviour
             }
             if (!nextTile.generated && tileSelector.GetTilesLeft() > 0)
             {
-                tileSelector.StartSelection(oppositeDirectionIndex);
+                tileSelector.StartSelection(GetOppositeDirection(directionsIndex));
                 generatingTiles = true;
             }
-            else if (nextTile.directions[oppositeDirectionIndex]) //Check if both directions are valid to let you move
+            else if (nextTile.directions[GetOppositeDirection(directionsIndex)]) //Check if both directions are valid to let you move
             {
                 Vector2Int previousPos = playerPos;
-                /*player.transform.position += new Vector3(directionVector.x, directionVector.y, 0f);
-                playerPos += directionVector;*/
-
                 StartCoroutine(SmoothMove(player.transform.position, nextTilePosition, 0.25f));
                 playerPos = nextTilePosition;
 
@@ -340,11 +320,22 @@ public class GridManager : MonoBehaviour
                     AudioManager.instance.PlaySound("markObjective", 0.5f);
                     gameOver = true;
                     winScreen.SetActive(true);
-                    Debug.Log("you win");
                     AudioManager.instance.PlaySound("win", 0.5f);
                 }
             }
         }
+    }
+    private int GetOppositeDirection(int direction)
+    {
+        int result = 0;
+        int totalNumber = direction + 2;
+        if (totalNumber >= availableDirections.Count)
+        {
+            result = direction - availableDirections.Count + 2;
+        }
+        else result = totalNumber;
+
+        return result;
     }
 
     private IEnumerator SmoothMove(Vector3 startPos, Vector2Int nextTilePos, float seconds)
@@ -367,11 +358,11 @@ public class GridManager : MonoBehaviour
         {
             vault1Pos = GetRandomVaultPos();
         }
-        int randomDirection = Random.Range(0, 4);
+        int randomDirection = Random.Range(0, availableDirections.Count);
         Vector2Int vaultNeighbor = new Vector2Int(vault1Pos.x + availableDirections[randomDirection].x, vault1Pos.y + availableDirections[randomDirection].y);
         while (!CheckBounds(vaultNeighbor))
         {
-            randomDirection = Random.Range(0, 4);
+            randomDirection = Random.Range(0, availableDirections.Count);
             vaultNeighbor = new Vector2Int(vault1Pos.x + availableDirections[randomDirection].x, vault1Pos.y + availableDirections[randomDirection].y);
         }
         vaultTile = tiles[vault1Pos.x, vault1Pos.y];
@@ -409,11 +400,6 @@ public class GridManager : MonoBehaviour
         else nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(false);
         if (placeSound) AudioManager.instance.PlaySound("placeTile", 0.5f);
         else AudioManager.instance.PlaySound("selectTile", 0.5f);
-    }
-
-    public Tile GetNextTile()
-    {
-        return nextTile;
     }
 
     public void SetTileGears(Tile tile)
@@ -476,20 +462,16 @@ public class GridManager : MonoBehaviour
             if (t.generated)
             {
                 generatedTiles.Add(t);
-                Debug.Log(t.position);
                 if (ManhattanDistance(playerPos, t.position) > maxDistance) maxDistance = ManhattanDistance(playerPos, t.position);
             }
         }
-        Debug.Log(maxDistance);
         Tile randomTile = generatedTiles[Random.Range(0, generatedTiles.Count)];
 
         if (maxDistance >= 2)
         {
-            Debug.Log(randomTile.position + " " + ManhattanDistance(randomTile.position, playerPos));
             while (ManhattanDistance(randomTile.position, playerPos) < 2) //Spawn at least 2 tiles away if possible
             {
                 randomTile = generatedTiles[Random.Range(0, generatedTiles.Count)];
-                Debug.Log(randomTile.position + " " +  ManhattanDistance(randomTile.position, playerPos));
             }
         }
         else
@@ -518,7 +500,6 @@ public class GridManager : MonoBehaviour
         AudioManager.instance.PlaySound("lostLife", 0.5f);
         if (health < 0)
         {
-            Debug.Log("You Lose");
             gameOver = true;
             loseScreen.SetActive(true);
         }

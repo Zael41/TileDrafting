@@ -71,12 +71,11 @@ public class TileSelector : MonoBehaviour
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && !UITiles[selectedTile].empty) //Checks if it connects
             {
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount, true);
-                gridManager.GetNextTile().tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+                gridManager.nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
                 UITiles[selectedTile].locked = false;
                 UITiles[selectedTile].tileObject.transform.GetChild(4).gameObject.SetActive(false);
                 selectableTiles.Remove(UITiles[selectedTile].tileFromList); //Remove the placed tile from the pool
                 StopSelection();
-                //HideMenu();
                 GenerateTiles();
             }
             if (keyboard.rKey.wasPressedThisFrame)
@@ -171,8 +170,6 @@ public class TileSelector : MonoBehaviour
                 }
                 int randomIndex = Random.Range(0, selectableTiles.Count);
                 bool showKRCR = initialTilesCount - selectableTiles.Count > 5; //Show control and key rooms after 5 drafts
-                //Debug.Log(showKRCR);
-                //Debug.Log(selectableTiles[randomIndex].tileType);
                 if (!showKRCR)
                 {
                     while (usedTiles.Contains(selectableTiles[randomIndex]) || selectableTiles[randomIndex].tileType == TileTypes.Control_Room || selectableTiles[randomIndex].tileType == TileTypes.Key_Room)
@@ -186,7 +183,6 @@ public class TileSelector : MonoBehaviour
                     {
                         randomIndex = FindTileIndex(randomIndex, usedTiles);
                         currentRerollCounter--;
-                        Debug.Log(selectableTiles[randomIndex].tileType);
                     } while (currentRerollCounter > 0 && selectableTiles[randomIndex].tileType != TileTypes.Control_Room && selectableTiles[randomIndex].tileType != TileTypes.Key_Room);
 
                     if (selectableTiles[randomIndex].tileType == TileTypes.Control_Room || selectableTiles[randomIndex].tileType == TileTypes.Key_Room)
@@ -277,7 +273,7 @@ public class TileSelector : MonoBehaviour
         UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
         title.text = "Choose One: ";
         gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
-        gridManager.GetNextTile().tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+        gridManager.nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
     }
 
     public void StopSelection()

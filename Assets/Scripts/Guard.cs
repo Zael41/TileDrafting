@@ -31,7 +31,6 @@ public class Guard : MonoBehaviour
     public void MovementPrediction()
     {
         int manhattanDist = ManhattanDistance(currentPos, gridManager.playerPos);
-        //manhattanDist = 9;
         if (manhattanDist <= 5) //Pseudo-random movement
         {
             int lastDirectionCounter = 0;
@@ -80,7 +79,6 @@ public class Guard : MonoBehaviour
                 {
                     while (playerTile.position != currentPos)
                     {
-                        //Debug.Log(playerTile.position);
                         finalPath.Add(playerTile);
                         playerTile = playerTile.path;
                     }
@@ -119,13 +117,6 @@ public class Guard : MonoBehaviour
             gridManager.TakeDamage();
             collided = true;
         }
-        //Debug.Log(currentPos + " GuardPos");
-        //Debug.Log(gridManager.playerPos + " PlayerPos");
-        //Debug.Log(nextTilePos + " NextGuardPos");
-
-        /*transform.position = new Vector3(nextTilePos.x, nextTilePos.y, 0f);
-        currentPos = new Vector2Int(nextTilePos.x, nextTilePos.y);
-        lastDirection = nextDirection;*/
 
         StartCoroutine(SmoothMove(transform.position, nextTilePos, 0.25f));
 
