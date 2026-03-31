@@ -139,15 +139,16 @@ public class GridManager : MonoBehaviour
 
         if (keyboard.fKey.wasPressedThisFrame && tiles[playerPos.x, playerPos.y].tileType != TileTypes.Default && tiles[playerPos.x, playerPos.y].remainingUses > 0 && !generatingTiles)
         {
+            int gearCost = Mathf.Abs(tiles[playerPos.x, playerPos.y].gearAmount);
             switch (tiles[playerPos.x, playerPos.y].tileType)
             {
                 case TileTypes.Control_Room:
-                    if (gearAmount < 2) break;
+                    if (gearAmount < gearCost) break;
                     SpawnVault();
-                    UpdateRoomAfterUse(2); // Need to fix this magic number
+                    UpdateRoomAfterUse(gearCost);
                     break;
                 case TileTypes.Key_Room:
-                    if (gearAmount < 2) break;
+                    if (gearAmount < gearCost) break;
                     if (vaultTile != null)
                     {
                         vaultTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = openVault;
@@ -156,27 +157,27 @@ public class GridManager : MonoBehaviour
                     else openVaultWhenSpawned = true;
                     objectives[1].SetActive(true);
                     AudioManager.instance.PlaySound("markObjective", 0.5f);
-                    UpdateRoomAfterUse(2); // Need to fix this magic number
+                    UpdateRoomAfterUse(gearCost);
                     break;
                 case TileTypes.Surveillance:
-                    if (gearAmount < 1) break;
+                    if (gearAmount < gearCost) break;
                     toNextAlertLevel = 0;
-                    UpdateRoomAfterUse(1); // Need to fix this magic number
+                    UpdateRoomAfterUse(gearCost);
                     break;
                 case TileTypes.Med_Bay:
-                    if (gearAmount < 2) break;
+                    if (gearAmount < gearCost) break;
                     health++;
-                    UpdateRoomAfterUse(2); // Need to fix this magic number
+                    UpdateRoomAfterUse(gearCost);
                     break;
                 case TileTypes.Chief_Office:
-                    if (gearAmount < 1) break;
+                    if (gearAmount < gearCost) break;
                     rerolls += 2;
-                    UpdateRoomAfterUse(1); // Need to fix this magic number
+                    UpdateRoomAfterUse(gearCost);
                     break;
                 case TileTypes.Archives:
-                    if (gearAmount < 1) break;
+                    if (gearAmount < gearCost) break;
                     holds++;
-                    UpdateRoomAfterUse(1); // Need to fix this magic number
+                    UpdateRoomAfterUse(gearCost);
                     break;
                 default:
                     break;

@@ -5,6 +5,8 @@ using UnityEngine;
 public class Guard : MonoBehaviour
 {
     #region "Variables"
+    [SerializeField] private float guardSpeed;
+    
     private Vector2Int currentPos;
     private int lastDirection; //Because we check this before it's ever set the guard doesn't like moving up on the first move, not a big deal though
     private List<Vector2Int> availableDirections;
@@ -118,7 +120,7 @@ public class Guard : MonoBehaviour
             collided = true;
         }
 
-        StartCoroutine(SmoothMove(transform.position, nextTilePos, 0.25f));
+        StartCoroutine(SmoothMove(transform.position, nextTilePos, guardSpeed));
 
         return collided;
     }
