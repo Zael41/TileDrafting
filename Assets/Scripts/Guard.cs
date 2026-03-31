@@ -24,7 +24,7 @@ public class Guard : MonoBehaviour
 
     private void Start()
     {
-        gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
+        gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>(); // Not very performant
         currentPos = new Vector2Int((int)(transform.position.x), (int)(transform.position.y));
         availableDirections = new List<Vector2Int> { new Vector2Int(0, 1), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(-1, 0) };
         MovementPrediction();
@@ -109,12 +109,7 @@ public class Guard : MonoBehaviour
     {
         bool collided = false;
         turnDone = false;
-        if (currentPos == gridManager.playerPos && prevPlayerPos == nextTilePos) //Passing damage
-        {
-            gridManager.TakeDamage();
-            collided = true;
-        }
-        if (nextTilePos == gridManager.playerPos) //Direct hit damage
+        if ((currentPos == gridManager.playerPos && prevPlayerPos == nextTilePos) || nextTilePos == gridManager.playerPos)
         {
             gridManager.TakeDamage();
             collided = true;

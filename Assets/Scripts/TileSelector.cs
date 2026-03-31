@@ -61,10 +61,10 @@ public class TileSelector : MonoBehaviour
             }
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && !UITiles[selectedTile].empty) //Checks if it connects
             {
-                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount, true);
+                gridManager.PlaceTile(UITiles[selectedTile], true);
                 gridManager.nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
                 UITiles[selectedTile].locked = false;
-                UITiles[selectedTile].tileObject.transform.GetChild(4).gameObject.SetActive(false);
+                UITiles[selectedTile].tileObject.transform.GetChild(4).gameObject.SetActive(false); // Disable held visual
                 selectableTiles.Remove(UITiles[selectedTile].tileFromList); //Remove the placed tile from the pool
                 StopSelection();
                 GenerateTiles();
@@ -80,7 +80,7 @@ public class TileSelector : MonoBehaviour
                     newDirections[i] = UITiles[selectedTile].directions[nextIndex];
                 }
                 UITiles[selectedTile].directions = newDirections;
-                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+                gridManager.PlaceTile(UITiles[selectedTile]);
             }
         }
     }
@@ -92,23 +92,7 @@ public class TileSelector : MonoBehaviour
         if (selectedTile < 0) selectedTile = UITiles.Count - 1;
         else if (selectedTile > UITiles.Count - 1) selectedTile = 0;
         UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
-        gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
-    }
-
-    public void ShowMenu()
-    {
-        foreach (Transform t in transform)
-        {
-            t.gameObject.SetActive(true);
-        }
-    }
-
-    public void HideMenu()
-    {
-        foreach(Transform t in transform)
-        {
-            t.gameObject.SetActive(false);
-        }
+        gridManager.PlaceTile(UITiles[selectedTile]);
     }
 
     public int GetTilesLeft()
@@ -248,7 +232,7 @@ public class TileSelector : MonoBehaviour
         selectedTile = 0;
         UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
         title.text = "Choose One: ";
-        gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+        gridManager.PlaceTile(UITiles[selectedTile]);
         gridManager.nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
     }
 

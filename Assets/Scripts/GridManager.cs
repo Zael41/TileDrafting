@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GridManager : MonoBehaviour
 {
@@ -388,17 +389,17 @@ public class GridManager : MonoBehaviour
         return true;
     }
 
-    public void PlaceTile(Sprite sprite, Quaternion rotation, bool camera, bool[] directions, TileTypes tileType, int gearAmount, bool placeSound = false)
+    public void PlaceTile(UITiles uiTile, bool placeSound = false)
     {
-        nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = sprite;
-        nextTile.tileObject.transform.GetChild(0).rotation = rotation;
+        nextTile.tileObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = uiTile.tileObject.transform.GetChild(0).GetComponent<Image>().sprite;
+        nextTile.tileObject.transform.GetChild(0).rotation = uiTile.tileObject.transform.GetChild(0).rotation;
         nextTile.generated = true;
-        nextTile.camera = camera;
-        nextTile.directions = directions;
-        nextTile.tileType = tileType;
-        nextTile.gearAmount = gearAmount;
+        nextTile.camera = uiTile.camera;
+        nextTile.directions = uiTile.directions;
+        nextTile.tileType = uiTile.tileType;
+        nextTile.gearAmount = uiTile.gearAmount;
         SetTileGears(nextTile);
-        if (camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
+        if (uiTile.camera) nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(true);
         else nextTile.tileObject.transform.GetChild(1).gameObject.SetActive(false);
         if (placeSound) AudioManager.instance.PlaySound("placeTile", 0.5f);
         else AudioManager.instance.PlaySound("selectTile", 0.5f);
