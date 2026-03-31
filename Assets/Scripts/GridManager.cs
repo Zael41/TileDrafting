@@ -15,6 +15,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private int health;
     [SerializeField] private int vaultNumber;
     [SerializeField] private int nextAlertCounter;
+    [SerializeField] private float playerSpeed;
 
     [Header("Assets")]
     [SerializeField] private GameObject slotPrefab;
@@ -274,7 +275,7 @@ public class GridManager : MonoBehaviour
             else if (nextTile.directions[GetOppositeDirection(directionsIndex)]) //Check if both directions are valid to let you move
             {
                 Vector2Int previousPos = playerPos;
-                StartCoroutine(SmoothMove(player.transform.position, nextTilePosition, 0.25f));
+                StartCoroutine(SmoothMove(player.transform.position, nextTilePosition, playerSpeed));
                 playerPos = nextTilePosition;
 
                 if (guards.Count > 0)
@@ -405,34 +406,9 @@ public class GridManager : MonoBehaviour
 
     public void SetTileGears(Tile tile)
     {
-        switch (tile.gearAmount)
-        {
-            case 0:
-                tile.tileObject.transform.GetChild(2).gameObject.SetActive(false);
-                break;
-            case 1:
-                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = oneGearSprite;
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
-                break;
-            case 2:
-                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = twoGearSprite;
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
-                break;
-            case -1:
-                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = oneGearSprite;
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
-                break;
-            case -2:
-                tile.tileObject.transform.GetChild(2).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = twoGearSprite;
-                tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);
-                break;
-            default:
-                break;
-        }
+        tile.tileObject.transform.GetChild(2).gameObject.SetActive(tile.gearAmount == 0 ? false : true);
+        tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().sprite = Mathf.Abs(tile.gearAmount) == 2 ? twoGearSprite : oneGearSprite; // Doesn't matter if it's 0 because it won't be shown
+        tile.tileObject.transform.GetChild(2).GetComponent<SpriteRenderer>().color = tile.gearAmount < 0 ? new Color(0.5f, 0.5f, 0.5f) : new Color(1f, 1f, 1f); // Same here
     }
 
     private void RaiseAlert(Tile nextTile)
@@ -445,10 +421,7 @@ public class GridManager : MonoBehaviour
             SpawnGuard();
             AudioManager.instance.PlaySound("alarmUp", 0.5f);
         }
-        else
-        {
-            AudioManager.instance.PlaySound("alarmTick", 0.5f);
-        }
+        else AudioManager.instance.PlaySound("alarmTick", 0.5f);
         UpdateUI();
         nextTile.cameraEnabled = false;
         nextTile.tileObject.transform.GetChild(1).GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f);

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.U2D;
 using UnityEngine.UI;
 
 public class TileSelector : MonoBehaviour
@@ -54,19 +53,11 @@ public class TileSelector : MonoBehaviour
         {
             if (keyboard.downArrowKey.wasPressedThisFrame)
             {
-                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(false);
-                selectedTile++;
-                if (selectedTile > 2) selectedTile = 0;
-                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
-                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+                SelectUITile(false);
             }
             if (keyboard.upArrowKey.wasPressedThisFrame)
             {
-                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(false);
-                selectedTile--;
-                if (selectedTile < 0) selectedTile = 2;
-                UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
-                gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
+                SelectUITile(true);
             }
             if (keyboard.enterKey.wasPressedThisFrame && UITiles[selectedTile].directions[requiredDirection] && !UITiles[selectedTile].empty) //Checks if it connects
             {
@@ -92,6 +83,16 @@ public class TileSelector : MonoBehaviour
                 gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
             }
         }
+    }
+
+    private void SelectUITile(bool up)
+    {
+        UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(false);
+        selectedTile += up ? -1 : 1;
+        if (selectedTile < 0) selectedTile = UITiles.Count - 1;
+        else if (selectedTile > UITiles.Count - 1) selectedTile = 0;
+        UITiles[selectedTile].tileObject.transform.GetChild(1).gameObject.SetActive(true);
+        gridManager.PlaceTile(UITiles[selectedTile].tileObject.transform.GetChild(0).GetComponent<Image>().sprite, UITiles[selectedTile].tileObject.transform.GetChild(0).rotation, UITiles[selectedTile].camera, UITiles[selectedTile].directions, UITiles[selectedTile].tileType, UITiles[selectedTile].gearAmount);
     }
 
     public void ShowMenu()
@@ -235,34 +236,9 @@ public class TileSelector : MonoBehaviour
 
     public void SetUITileGears(UITiles tile)
     {
-        switch (tile.gearAmount)
-        {
-            case 0:
-                tile.tileObject.transform.GetChild(3).gameObject.SetActive(false);
-                break;
-            case 1:
-                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = oneGearSprite;
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(1f, 1f, 1f);
-                break;
-            case 2:
-                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = twoGearSprite;
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(1f, 1f, 1f);
-                break;
-            case -1:
-                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = oneGearSprite;
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
-                break;
-            case -2:
-                tile.tileObject.transform.GetChild(3).gameObject.SetActive(true);
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = twoGearSprite;
-                tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
-                break;
-            default:
-                break;
-        }
+        tile.tileObject.transform.GetChild(3).gameObject.SetActive(tile.gearAmount == 0 ? false : true);
+        tile.tileObject.transform.GetChild(3).GetComponent<Image>().sprite = Mathf.Abs(tile.gearAmount) == 2 ? twoGearSprite : oneGearSprite; // Doesn't matter if it's 0 because it won't be shown
+        tile.tileObject.transform.GetChild(3).GetComponent<Image>().color = tile.gearAmount < 0 ? new Color(0.5f, 0.5f, 0.5f) : new Color(1f, 1f, 1f); // Same here
     }
 
     public void StartSelection(int requiredDirection)
