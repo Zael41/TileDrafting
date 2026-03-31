@@ -12,10 +12,12 @@ public class GridManager : MonoBehaviour
 {
     #region "Variables"
     [Header("Game Variables")]
+    [Tooltip("Only use odd numbers so there's a center tile")]
     [SerializeField] private int gridSize; // Only odd numbers allowed
     [SerializeField] private int health;
     [SerializeField] private int vaultNumber;
     [SerializeField] private int nextAlertCounter;
+    [Tooltip("The time in seconds it takes for the player to move")]
     [SerializeField] private float playerSpeed;
 
     [Header("Assets")]

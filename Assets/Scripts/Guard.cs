@@ -5,6 +5,7 @@ using UnityEngine;
 public class Guard : MonoBehaviour
 {
     #region "Variables"
+    [Tooltip("The time it takes for the guard to move in seconds")]
     [SerializeField] private float guardSpeed;
     
     private Vector2Int currentPos;

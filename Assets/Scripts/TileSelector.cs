@@ -17,7 +17,11 @@ public class TileSelector : MonoBehaviour
     [SerializeField] private TMP_Text title;
 
     [Header("Game Variables")]
+    [Tooltip("You only need to assign the Tile Object slot, the rest are handled by the code")]
     [SerializeField] private List<UITiles> UITiles;
+    [Tooltip("This list should be as long as the number of different tile sprites we have." + "\n" +
+        "The directions array length should always be 4. Click true on the directions that match the entrances of the tile. 0 - up, 1 - right, 2 - down, 3 - left." + "\n" +
+        "The Tile Info array length should be as many of these tiles you want in the pool. For each one, assign if they have a camera or not and the gear amount.")]
     [SerializeField] private List<AvailableTiles> availableTiles;
 
     private List<SelectableTiles> selectableTiles;
